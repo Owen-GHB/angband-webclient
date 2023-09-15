@@ -8,13 +8,14 @@ var db       = {
    games    : lowdb(new FileSync("./db/games.json")),
    news     : lowdb(new FileSync("./db/news.json")),
    chat     : lowdb(new FileSync("./db/chat.json")),
-   users    : lowdb(new FileSync("./db/users.json"))
+   users    : lowdb(new FileSync("./db/users.json")),
+   deaths   : lowdb(new FileSync("./db/deaths.json"))
 };
 var SALT_ROUNDS   = 5;
 const DEFAULT_ROLES = ["basic"];
 
 
-/* SHEMAS
+/* SCHEMAS
 
    users: [{
       name          : string,
@@ -46,6 +47,7 @@ db.games .defaults({data:[]}).write();
 db.news  .defaults({data:[]}).write();
 db.users .defaults({data:[]}).write();
 db.chat  .defaults({data:[]}).write();
+db.deaths.defaults({data:[]}).write();
 
 
 // export db object
@@ -130,7 +132,44 @@ module.exports.readMessages = function(limit) {
       .value();
 }
 
+// record a death
+module.exports.recordDeath = function(charinfo, deathstats) {
+   var now = + new Date();
+   charinfo.date = now;
+   db.deaths.get("data").push(charinfo).write();
+   if (!Object.keys(deathstats).includes(charinfo.game)) {
+		deathstats[charinfo.game]={};
+		deathstats[charinfo.game][charinfo.version]={};
+	} else if (!Object.keys(deathstats[charinfo.game]).includes(charinfo.version)) {
+		deathstats[charinfo.game][charinfo.version]={};
+	}
+	if (!Object.keys(deathstats[charinfo.game][charinfo.version]).includes(charinfo.killedBy)) {
+		deathstats[charinfo.game][charinfo.version][charinfo.killedBy]=1;
+	} else {
+		deathstats[charinfo.game][charinfo.version][charinfo.killedBy]+=1;
+	}
+   return deathstats;
+}
 
+module.exports.deathsOverview = function(){
+	var values = db.deaths.get("data").value();
+	var result = {};
+	for (var i=values.length-1;i>=0;i--) {
+		if (!Object.keys(result).includes(values[i].game)) {
+			result[values[i].game]={};
+			result[values[i].game][values[i].version]={};
+		} else if (!Object.keys(result[values[i].game]).includes(values[i].version)) {
+			result[values[i].game][values[i].version]={};
+		}
+		if (!Object.keys(result[values[i].game][values[i].version]).includes(values[i].killedBy)) {
+			result[values[i].game][values[i].version][values[i].killedBy]=1;
+		} else {
+			result[values[i].game][values[i].version][values[i].killedBy]+=1;
+		}
+	}
+	
+	return result;
+}
 
 //user roles
 module.exports.addRole = function(role,user) {
@@ -185,7 +224,7 @@ module.exports.refresh = function() {
    db.news.read();
    db.users.read();
    db.chat.read();
-   // db.sessions.read();
+   db.deaths.read();
 };
 
 
@@ -273,7 +312,7 @@ function authenticate(username, password, callback) {
          var new_user = {
             name           : username,
             password_hash  : hashed_password,
-            roles          : DEFAULT_ROLES,
+            roles          : DEFAULT_ROLES.valueOf(),
             registered     : + new Date(),
             last_connected : + new Date()
          };

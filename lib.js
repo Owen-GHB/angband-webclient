@@ -28,13 +28,52 @@ var home        = process.env.CUSTOM_HOME || '/home/angband';
 var localdb     = require("./localdb");
 var games       = localdb.fetchGames();
 
-
+// for more efficent graveyard updates
+var deathstats = localdb.deathsOverview();
 
 lib.stats = function() {
 	return {
 		players: Object.keys(metasockets).length,
 		games: Object.keys(matches).length
 	}
+}
+
+lib.deathstats = function() {
+	var result = [];
+	var safestats = JSON.parse(JSON.stringify(deathstats));
+	for (var i in safestats) {
+		result.push({"variant":i,"data":JSON.parse(JSON.stringify(safestats[i]))});
+	}
+	var index=0;
+	for (var i in safestats) {
+		for (var j in safestats[i]){
+			result[index].data[j]=[];
+			for (var k in safestats[i][j]) {
+				result[index].data[j].push({"killedBy":k,"count":safestats[i][j][k]});
+			}
+			result[index].data[j].sort(function(a,b) {
+				var countA = a.count;
+				var countB = b.count;
+				return ((b.count-a.count)/Math.abs(b.count-a.count));
+			});
+		}
+		index++;
+	}
+	result.sort(function(a, b) {
+		var nameA = a.variant.toUpperCase(); // ignore upper and lowercase
+		var nameB = b.variant.toUpperCase(); // ignore upper and lowercase
+		if (nameB == 'ANGBAND') return 1;
+		if (nameA < nameB) {
+		return -1;
+		}
+		if (nameA > nameB) {
+		return 1;
+		}
+		// names must be equal
+		return 0;
+	});
+	console.log(result);
+	return result;
 }
 
 
@@ -104,7 +143,7 @@ function chat(user, message){
 			announce(response);
 		}
 		else if(command === "/addrole" && command != msg && user.roles.indexOf("dev") !== -1) {
-			var role = msg.match(/\w+/)[0];
+			var role = msg.match(/\w+/)[0].valueOf();
 			var recipient = msg.replace(role + " ", "");
 			var roles = localdb.addRole(role,recipient);
 			response.content = "user "+recipient+" has roles "+JSON.stringify(roles);
@@ -123,7 +162,7 @@ function chat(user, message){
 			metasockets[user.name].send(JSON.stringify(response));
 		}
 		else if(command === "/rename" && command != msg) {
-			var game = msg.match(/[\w-]+/)[0];
+			var game = msg.match(/[\w-]+/)[0].valueOf();
 			var gameinfo = getgameinfo(game);
 			console.log(msg);
 			var longname = msg.replace(game + " ", "");
@@ -155,16 +194,26 @@ function chat(user, message){
 }
 
 function checkForDeath(player){
-	if (!isalive(player,matches[player].game,matches[player].version)) {
+	var game = matches[player].game;
+	var version = matches[player].version;
+	if (!isalive(player,game,version)) {
 		if (matches[player].alive) {
-			var killedBy = getcharinfo(player,matches[player].game,matches[player].version).killedBy
-			if ((typeof(killedBy)!='undefined') && (!(['Abortion','Quitting','his own hand','her own hand','their own hand'].includes(killedBy)))){
+			var charinfo = getcharinfo(player,game,version);
+			var killedBy = charinfo.killedBy;
+			var thrall = charinfo.isThrall;
+			var report = (typeof(killedBy)!='undefined') && (!(['Abortion','Quitting','his own hand','her own hand','their own hand'].includes(killedBy)));
+			if ((typeof(isThrall)!='undefined') && thrall) report = false;
+			if (report){
 				var msg = player+" was killed by "+killedBy;
 				if (killedBy == "Ripe Old Age") {
 					msg+=". Long live "+player+"!";
 					localdb.addRole("winner",player);
 				}
 				localdb.pushMessage("--deathangel--", msg);
+				charinfo.player = player;
+				charinfo.game = game;
+				charinfo.version = version;
+				deathstats=localdb.recordDeath(charinfo, deathstats);
 				announce({eventtype:"deathannounce",content:msg});
 			}
 		}
@@ -224,8 +273,8 @@ function isalive(user,game,version){
 
 //hacked for savefile header reading to avert Exo patch megahack. Un-hardcode this.
 function getcharinfo(user, game, version) {
-	var game_have_headers = ["angband","coffeeband"];
-	var version_have_headers = ["3.5.1","4.0.5","4.1.3","4.2.0","4.2.1","nightly"];
+	var game_have_headers = ["angband","coffeeband","xygos","tactical-angband","narsil"];
+	var version_have_headers = ["0.7","0.1.1","2.0.0","2.0.1","3.5.1","4.0.5","4.1.3","4.2.0","4.2.1","nightly"];
 	var charinfo = {};
 	if (game_have_headers.includes(game) && version_have_headers.includes(version)) {
 		var savefilepath = home+'/games/'+game+'/'+version+'/lib/save/'+user;
@@ -453,6 +502,9 @@ function newgame(user, msg) {
 		args.push('--');
 		for (var i in panelargs){
 			args.push(panelargs[i]);
+		}
+		if (['angband','faangband','narsil'].includes(game) && version == 'nightly') {
+			args.push('-K');
 		}
 	}
 	if (msg.walls) 

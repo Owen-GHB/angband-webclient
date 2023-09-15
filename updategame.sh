@@ -7,7 +7,7 @@ git reset --hard origin/coffeeband
 else
 git reset --hard origin/master
 fi
-if test $1 = 'angband-master' || test $1 = 'composband' || test $1 = 'frogcomposband' || test $1 = 'angband' || test $1 = 'coffeeband' || test $1 = 'firstageangband'
+if test $1 = 'angband-master' || test $1 = 'composband' || test $1 = 'frogcomposband' || test $1 = 'angband' || test $1 = 'coffeeband' || test $1 = 'firstageangband' || test $1 = 'faangband'|| test $1 = 'narsil'
 then
 printf "Rebuild makefiles? (use for version changes or build configuration changes) [y/n]"
 read -n 1 ans
@@ -51,7 +51,7 @@ if test $1 = 'firstageangband'
 then
 cp src/faangband ./$1
 fi
-if test $1 = 'composband' || test $1 = 'frogcomposband' || test $1 = 'angband'
+if test $1 = 'composband' || test $1 = 'frogcomposband' || test $1 = 'angband'|| test $1 = 'faangband' || test $1 = 'narsil'
 then
 cp src/$1 ./
 fi
