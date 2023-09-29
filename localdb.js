@@ -173,9 +173,13 @@ module.exports.deathsOverview = function(){
 
 //user roles
 module.exports.addRole = function(role,user) {
-   var roles = db.users.get("data").find({name: user}).value().roles;
-   if (!(roles.includes(role))) roles.push(role);
-   db.users.get("data").find({name: user}).assign({roles: roles}).write();
+   var user = db.users.get("data").find({name: user}).value();
+   var roles;
+   if (typeof(user)!='undefined') {
+		roles = user.roles;
+		if (!(roles.includes(role))) roles.push(role);
+		db.users.get("data").find({name: user}).assign({roles: roles}).write();
+   }
    return roles;
 }
 

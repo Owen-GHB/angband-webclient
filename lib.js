@@ -16,10 +16,7 @@ var matches     = {};
 var misc		= {};
 
 // holds current socket connections
-var metasockets = {};
-
-// for more efficient file updates
-var filelists   = {};
+var players = {};
 
 // for more efficient game list updates
 var lastmatchlist = {};
@@ -33,7 +30,7 @@ var deathstats = localdb.deathsOverview();
 
 lib.stats = function() {
 	return {
-		players: Object.keys(metasockets).length,
+		players: Object.keys(players).length,
 		games: Object.keys(matches).length
 	}
 }
@@ -147,19 +144,19 @@ function chat(user, message){
 			var recipient = msg.replace(role + " ", "");
 			var roles = localdb.addRole(role,recipient);
 			response.content = "user "+recipient+" has roles "+JSON.stringify(roles);
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 			
 		}
 		else if(command === "/refresh" && user.roles.indexOf("dev") !== -1){
 			localdb.refresh();
 			games = localdb.fetchGames();
 			response.content = "db refreshed";
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 		}
 		else if(command === "/unbanall" && user.roles.indexOf("dev") !== -1){
 			localdb.unBanAll();
 			response.content = "unbanned all users";
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 		}
 		else if(command === "/rename" && command != msg) {
 			var game = msg.match(/[\w-]+/)[0].valueOf();
@@ -174,11 +171,11 @@ function chat(user, message){
 			} else {
 				response.content = "You do not have the authority to rename "+game;
 			}
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 		}
 		else {
 			response.content = "unknown command or incorrect syntax";
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 		}
 
 	}
@@ -188,7 +185,7 @@ function chat(user, message){
 			announce(response);
 		} 
 		else {
-			metasockets[user.name].send(JSON.stringify(response));
+			players[user.name].socket.send(JSON.stringify(response));
 		}
 	}	
 }
@@ -222,9 +219,9 @@ function checkForDeath(player){
 }
 
 function announce(message){
-	for (var i in metasockets){
+	for (var i in players){
 		try {
-			metasockets[i].send(JSON.stringify(message));
+			players[i].socket.send(JSON.stringify(message));
 		}
 		catch (ex) {
 			// The WebSocket is not open, ignore
@@ -408,7 +405,7 @@ function handleDeleteRequest(user,request){
 		fs.unlinkSync(filedir+filename);
 	}
 	try {
-		metasockets[user.name].send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(user.name)}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(user.name)}));
 	} 
 	catch (ex) {
 		// The WebSocket is not open, ignore
@@ -525,7 +522,7 @@ function newgame(user, msg) {
 		var term = pty.fork(termdesc.path,termdesc.args, term_opts);
 		term.on('data', function(data) {
 			try {
-				metasockets[player].send(JSON.stringify({eventtype: 'owngameoutput', content: data}));
+				players[player].socket.send(JSON.stringify({eventtype: 'owngameoutput', content: data}));
 			} 
 			catch (ex) {
 				// The WebSocket is not open, ignore
@@ -533,7 +530,7 @@ function newgame(user, msg) {
 			if (typeof(matches[player])!='undefined') 
 				for (var i in matches[player].spectators) {
 					try {
-						metasockets[matches[player].spectators[i]].send(JSON.stringify({
+						players[matches[player].spectators[i]].socket.send(JSON.stringify({
 							eventtype: 'gameoutput',
 							content: {
 								player :player,
@@ -599,7 +596,7 @@ function updategame(user, msg) {
 			var term = pty.fork(termdesc.path,termdesc.args, term_opts);
 			term.on('data', function(data) {
 				try {
-					metasockets[user.name].send(JSON.stringify({eventtype: 'updateoutput', content: data}));
+					players[user.name].socket.send(JSON.stringify({eventtype: 'updateoutput', content: data}));
 				} 
 				catch (ex) {
 					// The WebSocket is not open, ignore
@@ -635,7 +632,7 @@ function updategame(user, msg) {
 							announce({eventtype:"systemannounce",content:msg.game+" has been updated"});
 						}
 						try {
-							metasockets[user.name].send(JSON.stringify({eventtype: 'updateover', content: 'default'}));
+							players[user.name].socket.send(JSON.stringify({eventtype: 'updateover', content: 'default'}));
 						} 
 						catch (ex) {
 							// The WebSocket is not open, ignore
@@ -691,9 +688,9 @@ function closegame(player){
 				console.log( 'Process %s was not found, expect user exited cleanly.',player );
 			}
 			try {
-				metasockets[player].send(JSON.stringify({eventtype: 'gameover', content: 'default'}));
-				metasockets[player].send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(player)}));
-				metasockets[player].send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(player)}));
+				players[player].socket.send(JSON.stringify({eventtype: 'gameover', content: 'default'}));
+				players[player].socket.send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(player)}));
+				players[player].socket.send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(player)}));
 			} 
 			catch (ex) {
 				// The WebSocket is not open, ignore
@@ -701,7 +698,7 @@ function closegame(player){
 			if (typeof(matches[player])!='undefined') 
 				for (var i in matches[player].spectators) {
 					try {
-						metasockets[matches[player].spectators[i]].send(JSON.stringify({
+						players[matches[player].spectators[i]].socket.send(JSON.stringify({
 							eventtype: 'gameover',
 							content: player.toString()
 						}));
@@ -723,8 +720,8 @@ function subscribe(user, message) {
 	var player = message.player;
 	var spectator = user.name;
 	if (typeof(matches[player]) != 'undefined' && typeof(matches[player].term) != 'undefined' && typeof(user.name) != 'undefined') {
-		if(metasockets[player]) {
-			metasockets[player].send(JSON.stringify({eventtype: 'systemannounce', content: spectator + " is now watching"}));
+		if(players[player]) {
+			players[player].socket.send(JSON.stringify({eventtype: 'systemannounce', content: spectator + " is now watching"}));
 			matches[player].spectators.push(spectator);
 		}
 	}
@@ -735,8 +732,8 @@ function unsubscribe(user, message) {
 	var player = message.player;
 	var spectator = user.name;
 	if (typeof(matches[player]) != 'undefined' && typeof(matches[player].term) != 'undefined' && typeof(user.name) != 'undefined') {
-		if(metasockets[player]) {
-			metasockets[player].send(JSON.stringify({eventtype: 'systemannounce', content: spectator + " stopped watching your game"}));
+		if(players[player]) {
+			players[player].socket.send(JSON.stringify({eventtype: 'systemannounce', content: spectator + " stopped watching your game"}));
 			var index = matches[player].spectators.indexOf(spectator);
 			if(index !== -1)
 				matches[player].spectators.splice(index, 1);
@@ -751,20 +748,21 @@ function unsubscribe(user, message) {
 // ===================================================================
 lib.welcome = function(user,ws) {
 	
-	metasockets[user.name] = ws;
+	players[user.name] = {};
+	players[user.name].socket = ws;
 	var player = user.name;
 	
 	//keep track of file list
-	filelists[user.name] = getfilelist(user.name);
+	players[user.name].filelist = getfilelist(user.name);
 	
 	//send some info to the user upon connecting
 	try {
 		var last_chat_messages = localdb.readMessages(config.chat_last_messages);
-		metasockets[user.name].send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(user.name)}));
-		metasockets[user.name].send(JSON.stringify({eventtype: 'populate_chat', content: last_chat_messages}));
-		metasockets[user.name].send(JSON.stringify({eventtype: 'matchupdate', content: getmatchlist(matches)}));
-		metasockets[user.name].send(JSON.stringify({eventtype: 'fileupdate', content: filelists[user.name]}));
-		metasockets[user.name].send(JSON.stringify({eventtype: 'usercount', content: Object.keys(metasockets)}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(user.name)}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'populate_chat', content: last_chat_messages}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'matchupdate', content: getmatchlist(matches)}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'fileupdate', content: players[user.name].filelist}));
+		players[user.name].socket.send(JSON.stringify({eventtype: 'usercount', content: Object.keys(players)}));
 	} 
 	catch (ex) {
 		// The WebSocket is not open, ignore
@@ -780,13 +778,13 @@ lib.welcome = function(user,ws) {
 	}
 
 	//announce their arrival
-	for (var i in metasockets){
+	for (var i in players){
 		try {
-			metasockets[i].send(JSON.stringify({
-				eventtype: 'usercount', content: Object.keys(metasockets)
+			players[i].socket.send(JSON.stringify({
+				eventtype: 'usercount', content: Object.keys(players)
 			}));
 			// if(i !== user.name) {
-			// 	metasockets[i].send(JSON.stringify({
+			// 	players[i].socket.send(JSON.stringify({
 			// 		eventtype: 'systemannounce', content: `${user.name} has joined the chat`
 			// 	}));
 			// }
@@ -797,13 +795,13 @@ lib.welcome = function(user,ws) {
 	}
 	
 	//listen for inputs
-	metasockets[user.name].on('message', function(message) {
+	players[user.name].socket.on('message', function(message) {
 		var msg = JSON.parse(message);
 		lib.respond(user,msg);
 	});
 	
 	//bid farewell
-	metasockets[user.name].once('close', function() {
+	players[user.name].socket.once('close', function() {
 		if (player!='borg'){
 			console.log('Closing socket for ' + player);
 			//we need to check there's a match in the first place
@@ -816,7 +814,7 @@ lib.welcome = function(user,ws) {
 				}
 			}
 		}
-		delete metasockets[user.name];
+		delete players[user.name];
 
 		// push departure event to chat database
 		var diff = moment().diff(user.last_disconnected, "seconds");
@@ -827,11 +825,11 @@ lib.welcome = function(user,ws) {
 		}
 
 		//announce the departure
-		for (var i in metasockets) {
+		for (var i in players) {
 			try {
-				metasockets[i].send(JSON.stringify({eventtype: 'usercount', content: Object.keys(metasockets)}));
+				players[i].socket.send(JSON.stringify({eventtype: 'usercount', content: Object.keys(players)}));
 				// if(i !== user.name) {
-				// 	metasockets[i].send(JSON.stringify({
+				// 	players[i].socket.send(JSON.stringify({
 				// 		eventtype: 'systemannounce', content: `${user.name} has left the chat`
 				// 	}));
 				// }
@@ -848,8 +846,7 @@ lib.keepalive = function(){
 	var matchlist=getmatchlist(matches);
 	var matchupdate=(lastmatchlist!=matchlist);
 	lastmatchlist=matchlist;
-	var fileupdate=(getfilelist(i)!=filelists[i]);
-	filelists[i]=getfilelist(i);
+
 	for (var i in matches) {
 		if (matches[i].idle) {
 			matches[i].idletime++;
@@ -863,11 +860,13 @@ lib.keepalive = function(){
 		
 		checkForDeath(i);
 	}
-	for (var i in metasockets) {
+	for (var i in players) {
 		try {
-			metasockets[i].ping();
-			if (matchupdate) metasockets[i].send(JSON.stringify({eventtype: 'matchupdate', content: matchlist}));
-			if (fileupdate) metasockets[i].send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(i)}));
+			players[i].socket.ping();
+			var fileupdate=(getfilelist(i)!=players[i].filelist);
+			players[i].filelist=getfilelist(i);
+			if (matchupdate) players[i].socket.send(JSON.stringify({eventtype: 'matchupdate', content: matchlist}));
+			if (fileupdate) players[i].socket.send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(i)}));
 		} catch (ex) {
 			// The WebSocket is not open, ignore
 		}
