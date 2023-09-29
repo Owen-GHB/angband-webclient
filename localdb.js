@@ -23,6 +23,7 @@ const DEFAULT_ROLES = ["basic"];
       role          : [string],
       registered    : datetime,
       last_visited  : datetime,
+	  ignores       : [string]
    }]
 
    news: [{
@@ -201,6 +202,54 @@ module.exports.checkRole = function(role,user) {
    return roles.includes(role);
 }
 
+module.exports.getIgnores = function (user) {
+	var user = db.users.get("data").find({name: user}).value();
+	var ignores;
+	if (typeof(user)!='undefined' && typeof(user.ignores!='undefined')) {
+		ignores = user.ignores;
+	} else {
+		ignores = [];
+		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+	}
+	return ignores;
+}
+
+module.exports.addIgnore = function(user, ignored) {
+	var user = db.users.get("data").find({name: user}).value();
+	var ignores;
+	if (typeof(user)!='undefined') {
+		ignores = user.ignores;
+		if (typeof(ignores)=='undefined') {
+			if (typeof(ignored!='undefined')) {
+				ignores = [ignored];
+			} else {
+				ignores = [];
+			}
+		} else {
+			ignores.push(ignored);
+		}
+		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+	}
+	return ignores;
+}
+
+module.exports.removeIgnore = function(user, ignored) {
+	var user = db.users.get("data").find({name: user}).value();
+	var ignores;
+	if (typeof(user)!='undefined') {
+		ignores = user.ignores;
+		if (typeof(ignores)=='undefined' || typeof(ignored=='undefined')) {
+			ignores = [ignored];
+		} else {
+			if (ignores.includes(ignored)) {
+				ignores.splice(ignores.indexOf(ignored),1);
+			}
+		}
+		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+	}
+	return ignores;
+}
+
 module.exports.fetchGames = function() {
 	return db.games.value().data;
 }
@@ -318,7 +367,8 @@ function authenticate(username, password, callback) {
             password_hash  : hashed_password,
             roles          : DEFAULT_ROLES.valueOf(),
             registered     : + new Date(),
-            last_connected : + new Date()
+            last_connected : + new Date(),
+			ignores        : []
          };
          db.users.get("data").push(new_user).write();
          callback(null, new_user, "new");
