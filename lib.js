@@ -125,40 +125,40 @@ function chat(user, message){
 			timestamp: new Date()
 		}
 	};
+	
+	var dev = (user.roles.indexOf("dev") !== -1) ;
+	var maintainer = (user.roles.indexOf("maintainer") !== -1) ;
+	var moderator = (user.roles.indexOf("moderator") !== -1) ;
 
-	// if this is a command message from devs or maintainers (starts with / followed by command) then do what needs to be done
-	if(message[0] === "/" && (user.roles.indexOf("dev") !== -1 || user.roles.indexOf("maintainer") !== -1)) {
+	// handle command messages starting with /
+	if(message[0] === "/" && message.match(/\/\w+/)) {
 		var command = message.match(/\/\w+/)[0];
-		var msg = message.replace(command + " ", "");
+		var msg = message.replace(command, "").trim();
 		
 		response.eventtype = "systemannounce";
 		
-		// announce text to all users as system message
-		if(command === "/announce" && command != msg && user.roles.indexOf("dev") !== -1) {
+		// developer commands
+		if (command === "/announce" && command != msg && dev) {
 			response.content = msg;
 			localdb.pushMessage("--system--", msg);
 			announce(response);
-		}
-		else if(command === "/addrole" && command != msg && user.roles.indexOf("dev") !== -1) {
+		} else if (command === "/addrole" && command != msg && dev) {
 			var role = msg.match(/\w+/)[0].valueOf();
 			var recipient = msg.replace(role + " ", "");
 			var roles = localdb.addRole(role,recipient);
 			response.content = "user "+recipient+" has roles "+JSON.stringify(roles);
 			players[user.name].socket.send(JSON.stringify(response));
 			
-		}
-		else if(command === "/refresh" && user.roles.indexOf("dev") !== -1){
+		} else if (command === "/refresh" && dev){
 			localdb.refresh();
 			games = localdb.fetchGames();
 			response.content = "db refreshed";
 			players[user.name].socket.send(JSON.stringify(response));
-		}
-		else if(command === "/unbanall" && user.roles.indexOf("dev") !== -1){
+		} else if (command === "/unbanall" && user.roles.indexOf("dev") !== -1) {
 			localdb.unBanAll();
 			response.content = "unbanned all users";
 			players[user.name].socket.send(JSON.stringify(response));
-		}
-		else if(command === "/rename" && command != msg) {
+		} else if (command === "/rename" && command != msg && (maintainer || dev)) {
 			var game = msg.match(/[\w-]+/)[0].valueOf();
 			var gameinfo = getgameinfo(game);
 			console.log(msg);
@@ -172,19 +172,39 @@ function chat(user, message){
 				response.content = "You do not have the authority to rename "+game;
 			}
 			players[user.name].socket.send(JSON.stringify(response));
-		}
-		else {
+		} else if (command === "/ignore" ) {
+			var ignored = localdb.addIgnore(user.name,msg);
+			players[user.name].ignored=ignored;
+			if (ignored.length) {
+				response.content = "Ignoring ";
+				for (var i in ignored) {
+					response.content += "'"+ignored[i]+"' ";
+				}
+			} else {
+				response.content = "Not ignoring anybody.";
+			}
+			players[user.name].socket.send(JSON.stringify(response));
+		} else if (command === "/unignore" ) {
+			var ignored = localdb.removeIgnore(user.name,msg);
+			players[user.name].ignored=ignored;
+			if (ignored.length) {
+				response.content = "Ignoring ";
+				for (var i in ignored) {
+					response.content += "'"+ignored[i]+"' ";
+				}
+			} else {
+				response.content = "Not ignoring anybody.";
+			}
+			players[user.name].socket.send(JSON.stringify(response));
+		} else {
 			response.content = "unknown command or incorrect syntax";
 			players[user.name].socket.send(JSON.stringify(response));
 		}
-
-	}
-	else {
+	} else {
 		if (!(user.roles.indexOf("mute") !== -1)) {
 			localdb.pushMessage(user, message);
 			announce(response);
-		} 
-		else {
+		} else {
 			players[user.name].socket.send(JSON.stringify(response));
 		}
 	}	
@@ -215,13 +235,15 @@ function checkForDeath(player){
 			}
 		}
 	}
-	matches[player].alive=isalive(player,matches[player].game,matches[player].version);
+	matches[player].alive=isalive(player, matches[player].game, matches[player].version);
 }
 
 function announce(message){
 	for (var i in players){
 		try {
-			players[i].socket.send(JSON.stringify(message));
+			//if (!(message.eventtype=='chat' && players[i].ignores.includes(message.content.user))) {
+				players[i].socket.send(JSON.stringify(message));
+			//}
 		}
 		catch (ex) {
 			// The WebSocket is not open, ignore
@@ -754,10 +776,18 @@ lib.welcome = function(user,ws) {
 	
 	//keep track of file list
 	players[user.name].filelist = getfilelist(user.name);
+	players[user.name].ignored = getIgnored(user.name);
 	
 	//send some info to the user upon connecting
 	try {
 		var last_chat_messages = localdb.readMessages(config.chat_last_messages);
+/*		if (players[user.name].ignored.length) {
+			for (var i=last_chat_messages.length-1;i>=0;i--) {
+				if (players[user.name].ignored.includes(last_chat_messages[i].user)) {
+					last_chat_messages.splice(i,1);
+				}
+			}
+		}*/
 		players[user.name].socket.send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(user.name)}));
 		players[user.name].socket.send(JSON.stringify({eventtype: 'populate_chat', content: last_chat_messages}));
 		players[user.name].socket.send(JSON.stringify({eventtype: 'matchupdate', content: getmatchlist(matches)}));
@@ -841,7 +871,6 @@ lib.welcome = function(user,ws) {
 	});
 }
 
-//also checks for file diffs in lieu of fs.watch
 lib.keepalive = function(){
 	var matchlist=getmatchlist(matches);
 	var matchupdate=(lastmatchlist!=matchlist);
@@ -863,10 +892,10 @@ lib.keepalive = function(){
 	for (var i in players) {
 		try {
 			players[i].socket.ping();
-			var fileupdate=(getfilelist(i)!=players[i].filelist);
-			players[i].filelist=getfilelist(i);
+			//var fileupdate=(getfilelist(i)!=players[i].filelist);
+			//players[i].filelist=getfilelist(i);
 			if (matchupdate) players[i].socket.send(JSON.stringify({eventtype: 'matchupdate', content: matchlist}));
-			if (fileupdate) players[i].socket.send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(i)}));
+			//if (fileupdate) players[i].socket.send(JSON.stringify({eventtype: 'fileupdate', content: getfilelist(i)}));
 		} catch (ex) {
 			// The WebSocket is not open, ignore
 		}

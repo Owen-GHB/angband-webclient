@@ -202,20 +202,20 @@ module.exports.checkRole = function(role,user) {
    return roles.includes(role);
 }
 
-module.exports.getIgnores = function (user) {
-	var user = db.users.get("data").find({name: user}).value();
+module.exports.getIgnores = function (username) {
+	var user = db.users.get("data").find({name: username}).value();
 	var ignores;
 	if (typeof(user)!='undefined' && typeof(user.ignores!='undefined')) {
 		ignores = user.ignores;
 	} else {
 		ignores = [];
-		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+		db.users.get("data").find({name: username}).assign({ignores: ignores}).write();
 	}
 	return ignores;
 }
 
-module.exports.addIgnore = function(user, ignored) {
-	var user = db.users.get("data").find({name: user}).value();
+module.exports.addIgnore = function(username, ignored) {
+	var user = db.users.get("data").find({name: username}).value();
 	var ignores;
 	if (typeof(user)!='undefined') {
 		ignores = user.ignores;
@@ -225,27 +225,27 @@ module.exports.addIgnore = function(user, ignored) {
 			} else {
 				ignores = [];
 			}
-		} else {
+		} else if (typeof(ignored)!='undefined' && new RegExp(/^[a-zA-Z0-9_]+$/).test(ignored)) {
 			ignores.push(ignored);
 		}
-		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+		db.users.get("data").find({name: username}).assign({ignores: ignores}).write();
 	}
 	return ignores;
 }
 
-module.exports.removeIgnore = function(user, ignored) {
-	var user = db.users.get("data").find({name: user}).value();
+module.exports.removeIgnore = function(username, ignored) {
+	var user = db.users.get("data").find({name: username}).value();
 	var ignores;
 	if (typeof(user)!='undefined') {
 		ignores = user.ignores;
-		if (typeof(ignores)=='undefined' || typeof(ignored=='undefined')) {
-			ignores = [ignored];
-		} else {
+		if (typeof(ignores)=='undefined') {
+			ignores = [];	
+		} else if (typeof(ignored)!='undefined' && new RegExp(/^[a-zA-Z0-9_]+$/).test(ignored)) {
 			if (ignores.includes(ignored)) {
 				ignores.splice(ignores.indexOf(ignored),1);
 			}
 		}
-		db.users.get("data").find({name: users[i].name}).assign({ignores: ignores}).write();
+		db.users.get("data").find({name: username}).assign({ignores: ignores}).write();
 	}
 	return ignores;
 }
