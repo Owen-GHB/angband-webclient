@@ -776,7 +776,7 @@ lib.welcome = function(user,ws) {
 	
 	//keep track of file list
 	players[user.name].filelist = getfilelist(user.name);
-	players[user.name].ignored = getIgnored(user.name);
+	players[user.name].ignored = localdb.getIgnores(user.name);
 	
 	//send some info to the user upon connecting
 	try {

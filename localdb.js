@@ -205,7 +205,7 @@ module.exports.checkRole = function(role,user) {
 module.exports.getIgnores = function (username) {
 	var user = db.users.get("data").find({name: username}).value();
 	var ignores;
-	if (typeof(user)!='undefined' && typeof(user.ignores!='undefined')) {
+	if (typeof(user)!='undefined' && typeof(user.ignores)!='undefined') {
 		ignores = user.ignores;
 	} else {
 		ignores = [];
@@ -220,7 +220,7 @@ module.exports.addIgnore = function(username, ignored) {
 	if (typeof(user)!='undefined') {
 		ignores = user.ignores;
 		if (typeof(ignores)=='undefined') {
-			if (typeof(ignored!='undefined')) {
+			if (typeof(ignored)!='undefined') {
 				ignores = [ignored];
 			} else {
 				ignores = [];
