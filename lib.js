@@ -241,9 +241,9 @@ function checkForDeath(player){
 function announce(message){
 	for (var i in players){
 		try {
-			if (!(message.eventtype=='chat' && players[i].ignores.includes(message.content.user))) {
+			//if (!(message.eventtype=='chat' && players[i].ignores.includes(message.content.user))) {
 				players[i].socket.send(JSON.stringify(message));
-			}
+			//}
 		}
 		catch (ex) {
 			// The WebSocket is not open, ignore
