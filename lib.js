@@ -787,6 +787,7 @@ lib.welcome = function(user,ws) {
 					last_chat_messages.splice(i,1);
 				}
 			}
+		}
 		
 		players[user.name].socket.send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(user.name)}));
 		players[user.name].socket.send(JSON.stringify({eventtype: 'populate_chat', content: last_chat_messages}));
