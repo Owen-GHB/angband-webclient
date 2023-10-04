@@ -241,9 +241,9 @@ function checkForDeath(player){
 function announce(message){
 	for (var i in players){
 		try {
-			//if (!(message.eventtype=='chat' && players[i].ignores.includes(message.content.user))) {
+			if (!(message.eventtype=='chat' && players[i].ignores.includes(message.content.user))) {
 				players[i].socket.send(JSON.stringify(message));
-			//}
+			}
 		}
 		catch (ex) {
 			// The WebSocket is not open, ignore
@@ -781,13 +781,13 @@ lib.welcome = function(user,ws) {
 	//send some info to the user upon connecting
 	try {
 		var last_chat_messages = localdb.readMessages(config.chat_last_messages);
-/*		if (players[user.name].ignored.length) {
+		if (players[user.name].ignored.length) {
 			for (var i=last_chat_messages.length-1;i>=0;i--) {
 				if (players[user.name].ignored.includes(last_chat_messages[i].user)) {
 					last_chat_messages.splice(i,1);
 				}
 			}
-		}*/
+		
 		players[user.name].socket.send(JSON.stringify({eventtype: 'gamelist', content: getgamelist(user.name)}));
 		players[user.name].socket.send(JSON.stringify({eventtype: 'populate_chat', content: last_chat_messages}));
 		players[user.name].socket.send(JSON.stringify({eventtype: 'matchupdate', content: getmatchlist(matches)}));
