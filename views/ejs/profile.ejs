@@ -28,7 +28,7 @@
 			<tr>
 				<td><%= data[i].game %></td>
 				<td><%= data[i].killedBy %></td>
-				<td><%= data[i].date.toString() %></td>
+				<td><%= new Date(data[i].date).toString() %></td>
 			</tr>
 			<% } %>
 		</table>
