@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title><%= user %></title>
+		<link rel="icon" type="image/png" href="/favicon.png">
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+		<link rel="stylesheet" href="/css/index.css">
+		<style>
+			body > * {
+				text-align:center;
+			}
+			table {
+				margin:auto;
+				text-align:left;
+			}
+		</style>
+	</head>
+	<body>
+		<h1><%= user %></h1>
+		<table>
+			<tr>
+			<% for (var i in data[0]) { %>
+				<th><%= i %></th>
+			<% } %>
+			</tr>
+			<% for (var i in data) { %>
+			<tr>
+				<% for (var j in data[i]) { %>
+					<td><%= data[i][j] %></td>
+				<% } %>
+			</tr>
+			<% } %>
+		</table>
+	</body>
+</html>
