@@ -20,15 +20,15 @@
 		<h1><%= user %></h1>
 		<table>
 			<tr>
-			<% for (var i in data[0]) { %>
-				<th><%= i %></th>
-			<% } %>
+				<th>Game</th>
+				<th>Cause of death</th>
+				<th>Date</th>
 			</tr>
 			<% for (var i in data) { %>
 			<tr>
-				<% for (var j in data[i]) { %>
-					<td><%= data[i][j] %></td>
-				<% } %>
+				<td><%= data[i].game %></td>
+				<td><%= data[i].killedBy %></td>
+				<td><%= data[i].date.toString %></td>
 			</tr>
 			<% } %>
 		</table>

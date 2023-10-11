@@ -173,7 +173,7 @@ module.exports.deathsOverview = function(){
 }
 
 module.exports.getUserStats = function(user){
-	var deaths = db.deaths.get("data").filter({player: user}).value();
+	var deaths = db.deaths.get("data").filter({player: user}).orderBy("date", "desc").value();
 	return deaths;
 }
 
