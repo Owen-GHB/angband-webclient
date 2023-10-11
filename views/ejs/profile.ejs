@@ -31,11 +31,11 @@
 			<% for (var i in data) { %>
 			<tr>
 				<td><%= data[i].game %></td>
-				<td><%= data[i].killedBy %></td>
 				<td><%= data[i].race %></td>
 				<td><%= data[i].class %></td>
 				<td><%= data[i].dLvl %></td>
 				<td><%= data[i].cLvl %></td>
+				<td><%= data[i].killedBy %></td>
 				<td><%= new Date(data[i].date).toDateString() %></td>
 			</tr>
 			<% } %>
