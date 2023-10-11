@@ -172,6 +172,11 @@ module.exports.deathsOverview = function(){
 	return result;
 }
 
+module.exports.getUserStats = function(user){
+	var deaths = db.deaths.get("data").filter({player: user}).value();
+	return deaths;
+}
+
 //user roles
 module.exports.addRole = function(role,user) {
    var user = db.users.get("data").find({name: user}).value();
@@ -252,6 +257,15 @@ module.exports.removeIgnore = function(username, ignored) {
 
 module.exports.fetchGames = function() {
 	return db.games.value().data;
+}
+
+module.exports.getUserList = function() {
+	var data = db.users.get("data").value();
+	var users = [];
+	for (var i=0;i<data.length;i++) {
+		users.push(data[i].name);
+	}
+	return users;
 }
 
 module.exports.setVersionString = function(game,longname) {

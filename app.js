@@ -13,14 +13,13 @@ var LocalStrategy = require('passport-local').Strategy;
 var localdb       = require("./localdb");
 var awc           = require('./lib.js');
 
-
 // do some crucial checks before we can proceed
 if(!process.env.SESSION_SECRET) {
    console.warn("SESSION_SECRET environment variable must be set, refer to readme.md. Exiting..");
    process.exit(1);
 }
 
-
+var users = localdb.getUserList();
 
 // =============================================================================
 //  S E R V E R   C O N F I G U R A T I O N
@@ -132,8 +131,18 @@ app.get("/forbidden", function(req, res) {
   return res.render("error.pug");
 });
 
-
-
+for (var i = 0; i < users.length; i++) {
+    (function (username) {
+        app.get('/' + username, function (req, res) {
+            var data = localdb.getUserStats(username);
+            app.set('view engine', 'ejs');
+            res.render('ejs/profile.ejs', {
+                user: username,
+                data: data
+            });
+        });
+    })(users[i]);
+}
 
 
 // =============================================================================
