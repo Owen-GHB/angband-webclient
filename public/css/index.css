@@ -99,14 +99,14 @@ section .content ul li {
    margin: 0 auto;
 }
 
-#logo, #footer { text-align: center; }
+#footer { text-align: center; }
 
 #login form label { display: block; }
 #login form input { width: 100%; box-sizing: border-box; }
 #login form div:not(:last-of-type) { margin-bottom: 1rem; } 
 
 /* lgog */
-#logo { padding: 3rem; }
+#logo { padding: 54px 32px 0px 10px; }
 
 
 /* donations block */
