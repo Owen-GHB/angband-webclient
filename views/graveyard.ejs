@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>Graveyard</title>
+		<link rel="icon" type="image/png" href="/favicon.png">
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+		<link rel="stylesheet" href="/css/index.css">
+		<style>
+			body > * {
+				text-align:center;
+			}
+			table {
+				margin:auto;
+				text-align:left;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Graveyard</h1>
+		<% for (var i in data) { %>
+		<h2><%= data[i].variant %></h2>
+			<% for (var j in data[i].data) { %>
+			<h3><%= j %></h3>
+			<table>
+				<tr><th>Cause of Death</th><th>Count</th></tr>
+				<% for (var k in data[i].data[j]) { %>
+				<tr><td><%= data[i].data[j][k].killedBy %></td><td><%= data[i].data[j][k].count %></td></tr>
+				<% } %>
+			</table>
+			<% } %>
+		<% } %>
+	</body>
+</html>

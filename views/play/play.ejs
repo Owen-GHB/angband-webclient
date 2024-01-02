@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>Angband Live</title>
+		<link rel="icon" type="image/png" href="/favicon.png">
+		<link href="https://fonts.googleapis.com/css?family=Anonymous+Pro|Cousine|Cutive+Mono|Droid+Sans+Mono|Fira+Mono|Inconsolata|Nova+Mono|Overpass+Mono|Oxygen+Mono|PT+Mono|Roboto+Mono|Share+Tech+Mono|Source+Code+Pro|Space+Mono|Ubuntu+Mono|VT323" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/solid.css" integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/fontawesome.css" integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG" crossorigin="anonymous">
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/tablet-ui.css">
+		<script type="text/javascript" src="/js/deps/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="/js/deps/moment.min.js"></script>
+		<script src="term.js"></script>
+	</head>
+	<body>
+		<div id="container" class="flex">
+			<audio id="notification" src="/notify.mp3" autostart="false"></audio>
+			<div class="pane-main">
+				<div id="games-lobby">
+				<% include game_lobby.ejs %>
+				</div>
+				<div id="terminal-pane" class="hidden">
+				<% include game_terminal.ejs %>
+				</div>
+				<div id="tester" class="terminal">A</div>
+			</div>
+			<div class="pane-side">
+				<div class="tab-buttons uchel">
+					<a class="selected" href="#" title="navigation" onclick="showTab('tab-navigation',this)"><i class="fas fa-home"></i></a>
+					<a href="#" title="files" onclick="showTab('tab-files',this)"><i class="fas fa-file-alt"></i></a>
+					<a class="hidden" id="btn-tabletui" href="#" title="tablet controls" onclick="showTab('tab-tabletui',this)"><i class="fas fa-tablet-alt"></i></a>
+					<a class="hidden" href="#" title="tools" onclick="showTab('tab-tools',this)"><i class="fas fa-wrench"></i></a>
+					<a href="#" title="settings" onclick="showTab('tab-settings',this)"><i class="fas fa-cog"></i></a>
+					<a class="float-right" href="/logout" title="logout"><i class="fas fa-sign-out-alt"></i></a>
+					<a class="float-right" href="/" target="_blank" title="news"><i class="fas fa-newspaper"></i></a>
+				</div>
+				<div class="tab-panels uchel">
+					<div id="tab-navigation" class="tab">
+					<% include tab_navigation.ejs %>
+					</div>
+					<div id="tab-files" class="tab hidden">
+					<% include tab_files.ejs %>
+					</div>
+					<div id="tab-tabletui" class="tab hidden">
+					<% include tab_tabletui.ejs %>
+					</div>
+					<div id="tab-tools" class="tab hidden">
+						<div id="tools" class="flex-grow panel">
+							<div class="wrapper">
+							   <p id="keystrokeinput"></p>
+							</div>
+						</div>
+					</div>
+					<div id="tab-settings" class="tab hidden">
+					<% include tab_settings.ejs %>
+					</div>
+				</div>
+				<div class="tab-buttons isaf">
+					<a id="link-chat" class="selected" href="#" title="chat" onclick="showTab('tab-chat', this)"><i class="fas fa-comments"></i></a>
+					<a href="#" title="people" onclick="showTab('tab-people', this)"><i class="fas fa-users"></i></a>
+				</div>
+				<div class="tab-panels isaf">
+					<div id="tab-chat" class="tab">
+					<% include tab_chat.ejs %>
+					</div>
+					<div id="tab-people" class="tab hidden">
+					<% include tab_people.ejs %>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+		function clean(node)
+		{
+		  for(var n = 0; n < node.childNodes.length; n ++)
+		  {
+			var child = node.childNodes[n];
+			if
+			(
+			  child.nodeType === 8 
+			  || 
+			  (child.nodeType === 3 && !/\S/.test(child.nodeValue))
+			)
+			{
+			  node.removeChild(child);
+			  n --;
+			}
+			else if(child.nodeType === 1)
+			{
+			  clean(child);
+			}
+		  }
+		}
+		clean(document.getElementsByClassName('pane-side')[0]);
+		var username ="<%= user.name %>";
+		</script>
+		<script type="text/javascript" src="/js/tablet-ui.js"></script>
+		<script type="text/javascript" src="/js/localopts.js"></script>
+		<script type="text/javascript" src="/js/interface.js"></script>
+		<script type="text/javascript" src="/js/terminal.js"></script>
+		<script type="text/javascript" src="/js/chat.js"></script>
+		<script type="text/javascript" src="/js/init.js"></script>
+		<script type="text/javascript" src="/js/main.js"></script>
+	</body>
+</html>

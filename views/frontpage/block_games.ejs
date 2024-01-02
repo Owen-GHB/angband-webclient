@@ -1,0 +1,13 @@
+<section>
+   <div class="title">GAMES</div>
+   <% var pl = players === 1 ? "user" : "users"; %>
+   <% var g = games === 1 ? "game" : "games"; %>
+   <% var verb = players === 1 ? "is" : "are"; %>
+   <div class="content">
+      Currently there <%= verb %> 
+      <span><%= players %></span> 
+      <%= pl %> online playing 
+      <span><%= games %></span> 
+      <%= g %>
+   </div>
+</section>

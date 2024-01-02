@@ -38,7 +38,7 @@ setInterval(function() { awc.keepalive(); }, 10000);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-
+app.set('view engine', 'ejs');
 
 // app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -85,8 +85,7 @@ passport.deserializeUser(localdb.deserializeUser);
 app.get('/', function(req, res) {
    var news = localdb.getNews();
    var stats = awc.stats();
-   app.set('view engine', 'pug');
-	res.render('jade/frontpage/frontpage.pug', {
+	res.render('frontpage/frontpage.ejs', {
       user    : req.user ? req.user.name : null, 
       news    : news,
       games   : stats.games,
@@ -101,19 +100,16 @@ app.post('/enter', passport.authenticate("local", {failureRedirect: '/forbidden'
 
 app.get("/play", localdb.isUserLoggedIn, function(req, res) {
    console.log("rendering play");
-   app.set('view engine', 'pug');
-   return res.render("jade/play/play.pug", {user: req.user});
+   return res.render("play/play.ejs", {user: req.user});
 });
 
 app.get('/faq', function(req, res) {
-   app.set('view engine', 'ejs');
-   res.render('ejs/faq.ejs');
+   res.render('faq.ejs');
 });
 
 app.get('/graveyard', function(req, res) {
    var deathstats = awc.deathstats();
-   app.set('view engine', 'ejs');
-   res.render('ejs/graveyard.ejs',{
+   res.render('graveyard.ejs',{
    	data:deathstats
    });
 });
@@ -127,16 +123,14 @@ app.get('/logout', function(req, res) {
 });
 
 app.get("/forbidden", function(req, res) {
-  app.set('view engine', 'pug');
-  return res.render("error.pug");
+  return res.render("error.ejs");
 });
 
 for (var i = 0; i < users.length; i++) {
     (function (username) {
         app.get('/' + username, function (req, res) {
             var data = localdb.getUserStats(username);
-            app.set('view engine', 'ejs');
-            res.render('ejs/profile.ejs', {
+            res.render('profile.ejs', {
                 user: username,
                 data: data
             });
@@ -161,7 +155,7 @@ app.ws('/', function (ws, req) {
 //  4 0 4   H A N D L E R
 // =============================================================================
 app.use(function(req, res, next) {
-  return res.render("404.pug");
+  return res.render("404.ejs");
 });
 
 

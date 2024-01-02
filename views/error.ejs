@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>authentication error</title>
+      <style>
+         html, body, div {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 18px;
+            background-color: black;
+            color: darkgray;
+            font-family: monospace; 
+         }
+         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="centerer">
+         <h2>Failed to log in or register a new user</h2>
+         <p>Possible reasons:</p>
+         <ul>
+            <li>username/password was entered wrong</li>
+            <li>[new users] password is less than 8 characters long</li>
+            <li>[new users] username is less than 3 characters long</li>
+            <li>[new users] username more than 25 characters long</li>
+            <li>[new users] username has invalid characters, only letters and numbers are allowed</li>
+            <li>user is banned</li>
+         </ul>
+      </div>
+   </body>
+</html>

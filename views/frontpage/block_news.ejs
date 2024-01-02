@@ -1,0 +1,11 @@
+<% news.forEach(function(n) { %>
+   <section>
+      <div class="title"><%= n.title %></div>
+      <div class="content">
+         <% n.content.forEach(function(p) { %>
+            <%- p %>
+         <% }); %>
+      </div>
+      <div class="footer">published at <span><%= n.timestamp %></span></div>
+   </section>
+<% }); %>

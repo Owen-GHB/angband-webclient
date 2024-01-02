@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+   <head>
+      <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+      <title>Angband Live</title>
+      <meta name='description' content='Web based client for playing Angband and variants remotely. Supports recording and live spectating.'>
+      <link rel='icon' type='image/png' href='/favicon.png'>
+      <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet'>
+      <link rel='stylesheet' href='/css/index.css'>
+      <script type='text/javascript' src='/js/jquery-3.2.1.min.js'></script>
+   </head>
+   <body>
+      <div id='grid'>
+         <div id='logo'>
+            <img src='/img/logo.png'>
+            <p>home of brave adventurers</p>
+            <a href='/faq'>First visit? Read the FAQ</a>
+         </div>
+         <div id='login'>
+            <% if (user) { %>
+               <% include block_user_welcome.ejs %>
+            <% } else { %>
+               <% include block_user_login.ejs %>
+            <% } %>
+         </div>
+         <div id='games'>
+            <% include block_games.ejs %>
+         </div>
+         <div id='news'>
+            <% include block_news.ejs %>
+         </div>
+         <div id='donate'>
+            <% include block_donate.ejs %>
+         </div>
+         <div id='footer'>
+            <% include block_footer.ejs %>
+         </div>
+      </div>
+   </body>
+</html>

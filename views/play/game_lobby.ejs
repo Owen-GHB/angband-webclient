@@ -1,0 +1,80 @@
+<div class="buttonrow"><img id="logo" src="/img/logo.png"/></div>
+<div class="new-game">
+  <div class="col">
+    <div class="row">
+      <div class="right-flex">game</div>
+      <div class="text-left">
+        <select id="gameselect"></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="right-flex">version</div>
+      <div class="text-left">
+        <select id="versionselect"></select>
+      </div>
+    </div>
+    <div class="row">
+      <p id="game-description"></p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="row">
+      <div class="right-flex">game font</div>
+      <div class="text-left">
+        <select id="extra-fonts">
+          <option value="monospace">default</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="right-flex">font size</div>
+      <div class="text-left">
+        <input type="number" min="8" max="40" step="0.5" id="games-font-size"/>
+      </div>
+    </div>
+    <div class="row subwindow-basic">
+      <div class="right-flex">subwindows</div>
+      <div class="text-left">
+        <input type="number" min="1" max="6" id="subwindows"/>
+      </div>
+    </div>
+    <div class="hidden row subwindow-extra">
+      <div class="right-flex">subwindow right cols</div>
+      <div class="text-left">
+        <input type="number" min="0" max="80" id="subwindow-right"/>
+      </div>
+    </div>
+    <div class="hidden row subwindow-extra">
+      <div class="right-flex">subwindow right split</div>
+      <div class="text-left">
+        <input type="number" min="0" max="80" id="subwindow-right-split"/>
+      </div>
+    </div>
+    <div class="hidden row subwindow-extra">
+      <div class="right-flex">subwindow top rows</div>
+      <div class="text-left">
+        <input type="number" min="0" max="80" id="subwindow-top"/>
+      </div>
+    </div>
+    <div class="hidden row subwindow-extra">
+      <div class="right-flex">subwindow bottom rows</div>
+      <div class="text-left">
+        <input type="number" min="0" max="80" id="subwindow-bottom"/>
+      </div>
+    </div>
+    <div class="hidden row">
+      <div class="right-flex">ASCII walls</div>
+      <div class="text-left">
+        <select id="ascii-walls">
+          <option value="no">no</option>
+          <option value="yes">yes</option>
+        </select>
+      </div>
+    </div>
+    <div class="buttonrow"><a class="hidden" id="deletebutton" href="#">delete & download savefile</a><a class="hidden" id="updatebutton" href="#">update</a></div>
+  </div>
+</div>
+<div class="buttonrow"><a id="playbutton" href="#">PLAY</a></div>
+<div id="watchmenu">
+  <table></table>
+</div>
