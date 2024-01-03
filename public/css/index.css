@@ -1,30 +1,18 @@
 html {
-	background-color: black;
-    background-image: url("/img/bgr_1920.jpg");
+    background-image: linear-gradient(to bottom, black, #162430ff, #647aa3ff);
     background-repeat: no-repeat;
-    background-size: cover;
+    background-attachment: fixed;
     background-position: center center;
+    background-size: cover;  
 }
-@media only screen and (min-width : 1921px) {
-    html {
-        background-image: url('/img/bgr_2560.jpg');
-    }
-}
-@media only screen and (max-width : 1280px) {
-    html {
-        background-image: url('/img/bgr_1280.jpg');
-    }
-}
-@media only screen and (max-width : 1000px) {
-    html {
-        background-image: url('/img/bgr_1000.jpg');
-    }
-}
-@media only screen and (max-width : 768px) {
-    html {
-        background-image: url('/img/bgr_768.jpg');
-    }
-}
+
+--light-cyan: #e0fbfcff;
+--light-blue: #c2dfe3ff;
+--tea-rose: #E8C1C5;
+--glaucous: #647aa3ff;
+--gunmetal: #162430ff;
+--rich-black: #111c22ff;
+
 html, body {
    line-height: initial;
    height: 100%;
@@ -37,27 +25,27 @@ html,body,div,p {
 }
 
 html,body,input,button {
-   color: #999;
+   color: #E9F1F7;
    font-size: 14px;
    font-family: 'Ubuntu Mono', monospace;
 }
 
 input, button {
-   background-color: #222325;
-   border: 2px solid #46474a;
+   background-color: #162430ff;
+   border: 2px inset #647aa3ff;
    padding: 0.2rem 0.4rem;
 }
 
-input[type=submit], a { cursor: pointer; color: coral; }
+input[type=submit], a { cursor: pointer; color: #c2dfe3ff; }
 
 
 section:not(:last-of-type) {
-   margin-bottom: 2rem;
+   margin-bottom: 1rem;
 }
 
 
 section {
-   border: 2px solid #323232;
+   border: 2px outset #647aa3ff;
 }
 
 section .title, section .footer {
@@ -66,25 +54,24 @@ section .title, section .footer {
 }
 section .content { padding: 1rem; }
 section .title {
-   background-color: rgba(0,0,0,0.7);
+   background-image: linear-gradient(to bottom right, #647aa3ff, #162430ff);
    padding-top: 0.3rem;
    padding-bottom: 0.3rem;
-   color: #bada55;
+   color: #C0E6DE;
 }
-section .content { background-color: rgba(0,0,0,0.5); }
-section .content a { color: coral; text-decoration: none; }
+section .content { background-color: #111c22ff; border: 2px inset #162430ff; }
+section .content a { color: #c6a15b; text-decoration: none; }
 section .content b, 
 section .content strong
    { color: white; font-weight: 400; }
-section .content p:not(:last-of-type) { margin-bottom: 0.5rem; }
+section .content { margin-bottom: 0.5rem; }
 section .footer { 
-   background-color: rgba(0,0,0,0.7); 
-   text-align: right; 
-   color: #5e5e5e; 
+   background-image: linear-gradient(to bottom right, #162430ff, #111c22ff); 
+   text-align: right;  
    padding-top: 2px; 
    padding-bottom: 2px; 
 }
-section .footer span { color: coral; }
+section .footer span { color: #C0E6DE; }
 section .content ul {
    margin: 0.5rem 0;
    padding-left: 2rem;
@@ -108,54 +95,69 @@ section .content ul li {
 /* lgog */
 #logo { padding: 54px 32px 0px 10px; }
 
-
 /* donations block */
 #donate input {
    border: 0;
    padding: 0;
 }
-#donate form { margin-top: 1rem; }
-#donate h6 { color: #bada55; margin-top: 1rem; }
+#donate h6 { color: #c2dfe3ff; margin-top: 1rem; }
 #donate .summ { float: right; }
 #donate .sign { color: #555; }
 
 /* games */
-#games span { color: #bada55; }
+#games span { color: #c2dfe3ff; }
 
 /* footer */
 #footer { padding: 1rem; }
-#footer span {color: coral;}
+#footer span {color: #c2dfe3ff;}
 
 /* utility classes */
 .text-center { text-align: center; }
 
-@supports (display: grid) {
+#container {
+  width: 1200px;
+  margin: auto;
+}
 
-   #grid {
-      width: 1200px;
-   }
+.flexbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
-   #grid {
-      display: grid;
-      grid-row-gap: 1rem;
-      grid-column-gap: 2rem;
-      grid-template-columns: 4fr 1fr;
-      grid-template-rows: min-content min-content min-content min-content auto min-content;
-      grid-template-areas: 
-         "logo logo"
-         "news login"
-         "news games"
-         "news donate"
-         "news empty"
-         "footer footer";
-   }
+#content {
+  padding: 8px 4px; 
+  background-color: #162430ff;
+  border: 2px outset #647aa3ff;
+}
 
-   #grid #logo   {grid-area: logo;}
-   #grid #news   {grid-area: news;}
-   #grid #login  {grid-area: login;}
-   #grid #games  {grid-area: games;}
-   #grid #donate {grid-area: donate;}
-   #grid #footer {grid-area: footer;}
+#left-pane {
+  flex: 4;
+  margin-right: 20px;
+}
+#right-pane {
+  flex: 1;
+  margin-right: 20px;
+}
 
+div.locationbar { 
+	padding-top: 40px; 
+}
 
+div.locationbar a { 
+	padding: 12px 16px 1px 16px; 
+  background-image: linear-gradient(to bottom right, #162430ff, #111c22ff);
+  color: #C0E6DE;
+  border: 2px outset #647aa3ff;
+	border-bottom: 0px solid black;
+	font-weight: bold;
+  text-decoration: none;
+	font-size: 16px;
+	font-family: poppinsregular, Helvetica, Arial, sans-serif;
+}
+
+div.locationbar a.akt { 
+  background-image: none;
+  background-color: #162430ff;
+  padding-bottom: 3px;
 }

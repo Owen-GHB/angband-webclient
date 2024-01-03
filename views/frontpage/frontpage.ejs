@@ -10,31 +10,76 @@
       <script type='text/javascript' src='/js/jquery-3.2.1.min.js'></script>
    </head>
    <body>
-      <div id='grid'>
-         <div id='logo'>
-            <img src='/img/logo.png'>
-            <p>home of brave adventurers</p>
-            <a href='/faq'>First visit? Read the FAQ</a>
+      <div id='container'>
+         <div id='header'>
+            <img id ='logo' src='/img/logo.png'>
+            <div class="locationbar">
+				<a href="/" class="akt">Home</a>
+				<a href="/play">Play</a>
+				<a href="/ladder.php">Ladder</a>
+				<a href="/forum/">Forum</a>
+				<a href="/faq">FAQ</a>
+			</div>
          </div>
-         <div id='login'>
-            <% if (user) { %>
-               <% include block_user_welcome.ejs %>
-            <% } else { %>
-               <% include block_user_login.ejs %>
-            <% } %>
-         </div>
-         <div id='games'>
-            <% include block_games.ejs %>
-         </div>
-         <div id='news'>
-            <% include block_news.ejs %>
-         </div>
-         <div id='donate'>
-            <% include block_donate.ejs %>
-         </div>
-         <div id='footer'>
-            <% include block_footer.ejs %>
-         </div>
+		 <div id='content' class='flexbox'>
+			 <div id='left-pane'>
+				<div id='news'>
+					<% news.forEach(function(n) { %>
+					   <section>
+						  <div class="title"><%= n.title %></div>
+						  <div class="content">
+							 <% n.content.forEach(function(p) { %>
+								<%- p %>
+							 <% }); %>
+						  </div>
+						  <div class="footer">published at <span><%= n.timestamp %></span></div>
+					   </section>
+					<% }); %>
+				 </div>
+			 </div>
+			 <div id='right-pane'>
+				 <div id='login'>
+					<% if (user) { %>
+					   <% include block_user_welcome.ejs %>
+					<% } else { %>
+					   <% include block_user_login.ejs %>
+					<% } %>
+				 </div>
+				 <div id='games'>
+					<section>
+					   <div class="title">Active Games</div>
+					   <% var pl = players === 1 ? "user" : "users"; %>
+					   <% var g = games === 1 ? "game" : "games"; %>
+					   <% var verb = players === 1 ? "is" : "are"; %>
+					   <div class="content">
+						  Currently there <%= verb %> 
+						  <span><%= players %></span> 
+						  <%= pl %> online playing 
+						  <span><%= games %></span> 
+						  <%= g %>
+					   </div>
+					</section>
+				 </div>
+				 <div id='donate'>
+					<section>
+					   <div class="title">Support the site</div>
+					   <div class="content text-center">
+						  <p>Help cover our monthly costs</p>
+							  <p>Github sponsors</p>
+							  <iframe src="https://github.com/sponsors/Owen-GHB/button" title="Sponsor Owen-GHB" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+							  <p>Paypal</p>
+							  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+								 <input type="hidden" name="cmd" value="_s-xclick">
+								 <input type="hidden" name="hosted_button_id" value="RTYK92PSGSRGE">
+								 <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
+								 <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+							  </form>
+						  </div>
+					   </div>			   
+					</section>
+				 </div>
+			 </div>
+		 </div>
       </div>
    </body>
 </html>
