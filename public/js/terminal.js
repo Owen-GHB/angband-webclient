@@ -127,7 +127,7 @@ function adjustFontSizeForSpectation(remote_game_dimensions) {
 }
 
 function calculateIdealTerminalDimensions() {
-	var desired_font_size = $("#games-font-size").val();
+	var desired_font_size = $("#games-font-size").val()+"px";
 	var desired_font_family = $("#extra-fonts").val();
 
 	// apply desired font size to tester and get its new dimensions
