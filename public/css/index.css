@@ -163,7 +163,13 @@ section .content ul li {
 }
 
 #deaths > section, #wins > section {
+
+}
+
+#deaths > section > .content, #wins > section > .content {
   background-color:black;
+  border: 2px inset #162430ff;
+  margin: 2px;
 }
 
 #deaths > section {
