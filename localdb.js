@@ -176,7 +176,7 @@ module.exports.getLatestDeaths = function(){
     var deaths = db.deaths.get('data');
     deaths = deaths.filter(death => death.killedBy != "Ripe Old Age");
     deaths = deaths.orderBy('date', 'desc').value();
-    deaths = deaths.slice(0, 5);
+    deaths = deaths.slice(0, 4);
 
     return deaths;
 }
@@ -185,7 +185,7 @@ module.exports.getLatestWins = function(){
     var deaths = db.deaths.get('data');
     deaths = deaths.filter(death => death.killedBy == "Ripe Old Age");
     deaths = deaths.orderBy('date', 'desc').value();
-    deaths = deaths.slice(0, 5);
+    deaths = deaths.slice(0, 4);
 
     return deaths;
 }

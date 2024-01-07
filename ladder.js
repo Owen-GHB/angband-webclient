@@ -3,7 +3,7 @@ var MySql = require('sync-mysql');
 
 var connection = new MySql({
   host: 'localhost',
-  user: config.ladder_user,
+  user: config.ladder_username,
   password: config.ladder_password,
   database: config.ladder_dbname
 });

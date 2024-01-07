@@ -12,63 +12,64 @@
   <body>
     <div id='container'><%- include('header.ejs', { pageTitle: 'Home' }) %><div id='content' class='flexbox'>
         <div id='left-pane'>
-	  <div id='news'><% news.forEach(function(n) { %><section>
-              <div class="title"><%= n.title %></div>
-              <div class="content"><% n.content.forEach(function(p) { %><%- p %><% }); %></div>
-              <div class="footer">published at <span><%= n.timestamp %></span></div>
-            </section><% }); %>
-	  </div>
-	<div id='livestats'>
-          <div id='games'>
-            <section>
-              <div class="title">Active Games</div><% var pl = players === 1 ? "user" : "users"; %><% var g = games === 1 ? "game" : "games"; %><% var verb = players === 1 ? "is" : "are"; %><div class="content"> There <%= verb %><span> <%= players %> </span><%= pl %> online playing <span><%= games %> </span><%= g %></div>
-            </section>
-          </div>
-	  <div id='deaths'>
-          <section>
-              <div class="title">Live Deaths</div>
-              <div class="content">
-                <table>
-                <tbody>
-                <% latestdeaths.forEach(function(n) { %>
-                <tr>
-                <td><%= n.player+" was killed by "+n.killedBy %></td>
-                </tr>
-                <% }); %>
-                </tbody>
-                </table>
-              </div>
-          </section>
-	  </div>
-	  <div id='wins'>
-          <section>
-              <div class="title">Live Victories</div>
-              <div class="content">
-                <table>
-                <tbody>
-                <% latestwins.forEach(function(n) { %>
-                <tr>
-                <td><%= n.player+" won "+n.game+" "+n.version %></td>
-                </tr>
-                <% }); %>
-                </tbody>
-                </table>
-              </div>
-          </section>
-	  </div>
-	</div>
-	  <% if (latestdumps.length) { %>
-	  <div id='dumps'>
-	  <section>
-              <div class="title">Latest Dumps</div>
-              <div class="content">
-		<table>
-		<tbody>
-		<% latestdumps.forEach(function(n) { %>
-		<tr>
-		<% var date = new Date(n.sortdate) %>
-		<td><%= date.toLocaleTimeString('en-GB',{hour:'numeric',minute:'numeric',hour12:false}) %></td>
-		<td>
+		<div id='news'><% news.forEach(function(n) { %><section>
+			  <div class="title"><%= n.title %></div>
+			  <div class="content"><% n.content.forEach(function(p) { %><%- p %><% }); %></div>
+			  <div class="footer">published at <span><%= n.timestamp %></span></div>
+			</section><% }); %>
+		</div>
+		<div class='pagerow'>
+			  <div id='games'>
+				<section>
+				  <div class="title">Active Games</div><% var pl = players === 1 ? "user" : "users"; %><% var g = games === 1 ? "game" : "games"; %><% var verb = players === 1 ? "is" : "are"; %><div class="content"> There <%= verb %><span> <%= players %> </span><%= pl %> online playing <span><%= games %> </span><%= g %></div>
+				</section>
+			  </div>
+		  <div id='deaths'>
+			  <section>
+				  <div class="title">Live Deaths</div>
+				  <div class="content">
+					<table>
+					<tbody>
+					<% latestdeaths.forEach(function(n) { %>
+					<tr>
+					<td><%= n.player+" was killed by "+n.killedBy %></td>
+					</tr>
+					<% }); %>
+					</tbody>
+					</table>
+				  </div>
+			  </section>
+		  </div>
+		  <div id='wins'>
+			  <section>
+				  <div class="title">Live Victories</div>
+				  <div class="content">
+					<table>
+					<tbody>
+					<% latestwins.forEach(function(n) { %>
+					<tr>
+					<td><%= n.player+" won "+n.game+" "+n.version %></td>
+					</tr>
+					<% }); %>
+					</tbody>
+					</table>
+				  </div>
+			  </section>
+		  </div>
+		</div>
+		  <div class="pagerow">
+		  <% if (latestdumps.length) { %>
+		  <div id='dumps'>
+			<section>
+			<div class="title">Latest Dumps</div>
+			<div class="content">
+			<table>
+			<tbody>
+			<% latestdumps.forEach(function(n) { %>
+			<tr>
+			<% var date = new Date(n.sortdate) %>
+			<td><%= date.toLocaleTimeString('en-GB',{hour:'numeric',minute:'numeric',hour12:false}) %></td>
+			<td>
 			<a href="<%= 'https://forum.angband.live/ladder-show.php?id='+n.id %>"><%= n.name %></a>
 			<% if (n.date_upd !== '0000-00-00 00:00:00') { %>
 				<img src="/img/jimmac-updated.png" title="updated" alt="updated" align="absbottom" width="16" height="16">
@@ -78,39 +79,40 @@
 			<% } else if (n.status === "dead") { %>
 				<img src="/img/orcrist-skull.gif" align="absbottom" alt="dead" title="dead" width="16" height="16">
 			<% } %>
-		</td>
-		<td><%= n.variant %></td>
-		<td><%= "CL"+n.level %></td>
-		<td><%= n.username.length ? n.username : "<"+n.email+">" %></td>
-		</tr>
-		<% }); %>
-		</tbody>
-		</table>	      
-	      </div>
-          </section>
-	  </div>
-	  <% } %>
-	  <% if (latestscreens.length) { %>
-	  <div id='screens'>
-          <section>
-              <div class="title">Latest Screenshots</div>
-              <div class="content">
-                <table>
-                <tbody>
-                <% latestscreens.forEach(function(n) { %>
-                <tr>
-				<td><%= n.time_f %></td>
-				<td><a href="<%= 'https://forum.angband.live/screen-show.php?id='+n.id %>"><%= n.name %></a></td>
-				<td><%= n.variant %></td>
-				<td><%= n.username.length ? n.username : "<"+n.email+">" %></td>
-                </tr>
-                <% }); %>
-                </tbody>
-                </table>
-              </div>
-          </section>
-	  </div>
-	  <% } %>
+			</td>
+			<td><%= n.variant %></td>
+			<td><%= "CL"+n.level %></td>
+			<td><%= n.username.length ? n.username : "<"+n.email+">" %></td>
+			</tr>
+			<% }); %>
+			</tbody>
+			</table>	      
+			</div>
+			</section>
+		  </div>
+		  <% } %>
+		  <% if (latestscreens.length) { %>
+		  <div id='screens'>
+			  <section>
+				  <div class="title">Latest Screenshots</div>
+				  <div class="content">
+					<table>
+					<tbody>
+					<% latestscreens.forEach(function(n) { %>
+					<tr>
+					<td><%= n.time_f %></td>
+					<td><a href="<%= 'https://forum.angband.live/screen-show.php?id='+n.id %>"><%= n.name %></a></td>
+					<td><%= n.variant %></td>
+					<td><%= n.username.length ? n.username : "<"+n.email+">" %></td>
+					</tr>
+					<% }); %>
+					</tbody>
+					</table>
+				  </div>
+			  </section>
+		  </div>
+		  <% } %>
+		  </div>
         </div>
         <div id='right-pane'>
           <div id='login'><% if (typeof(user)!='undefined' && user) { %><section>
