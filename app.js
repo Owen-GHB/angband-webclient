@@ -17,7 +17,7 @@ var awc           = require('./lib.js');
 
 if(!process.env.SESSION_SECRET) {
   var result = '';
-  while (result.length < length) {
+  while (result.length < 12) {
     const randomCharCode = Math.floor(Math.random() * (122 - 48) + 48);
     if (
       (randomCharCode >= 48 && randomCharCode <= 57) ||
