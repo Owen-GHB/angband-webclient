@@ -18,7 +18,7 @@ html, body {
    height: 100%;
 }
 
-html,body,div,p {
+html,body,div,p,table,tbody {
    margin:  0;
    padding: 0;
    border:  0;
@@ -46,27 +46,29 @@ section:not(:last-of-type) {
 
 section {
    border: 2px outset #647aa3ff;
+   background-color: #111c22ff;
 }
 
 section .title, section .footer {
    padding-left: 1rem;
    padding-right: 1rem;
 }
-section .content { padding: 1rem; }
 section .title {
    background-image: linear-gradient(to bottom right, #647aa3ff, #162430ff);
    padding-top: 0.3rem;
    padding-bottom: 0.3rem;
    color: #C0E6DE;
 }
-section .content { background-color: #111c22ff; border: 2px inset #162430ff; }
+section .content { 
+   padding: 0.5rem;
+   padding-left: 1rem; 
+}
 section .content a { color: #c6a15b; text-decoration: none; }
 section .content b, 
 section .content strong
    { color: white; font-weight: 400; }
-section .content { margin-bottom: 0.5rem; }
 section .footer { 
-   background-image: linear-gradient(to bottom right, #162430ff, #111c22ff); 
+   background-image: linear-gradient(to bottom right, #111c22ff, #162430ff); 
    text-align: right;  
    padding-top: 2px; 
    padding-bottom: 2px; 
@@ -129,6 +131,7 @@ section .content ul li {
   padding: 8px 4px; 
   background-color: #162430ff;
   border: 2px outset #647aa3ff;
+  hieght: 100%;
 }
 
 #left-pane {
@@ -138,6 +141,37 @@ section .content ul li {
 #right-pane {
   flex: 1;
   margin-right: 20px;
+}
+
+#livestats {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-bottom: 2px;
+}
+
+#games {
+  flex: 1;
+}
+
+#deaths, #wins {
+  flex: 2;
+}
+
+#games > section, #deaths > section, #wins > section {
+  height: 100%;
+}
+
+#deaths > section, #wins > section {
+  background-color:black;
+}
+
+#deaths > section {
+  color: #800000;
+}
+
+#wins > section {
+  color: #b220b2;
 }
 
 div.locationbar { 

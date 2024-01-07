@@ -1,6 +1,6 @@
 module.exports = {
-	use_ladder:false,
-	ladder_dbname:"",
-	ladder_username:"",
-	ladder_password:""
+	use_ladder:true,
+	ladder_dbname:"angband",
+	ladder_username:"angband",
+	ladder_password:"gatestomoria"
 };

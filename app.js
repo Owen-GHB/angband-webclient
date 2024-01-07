@@ -10,6 +10,8 @@ var app           = express();
 var expressWs     = require('express-ws')(app);
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var config        = require('./config');
+var ladder        = require('./ladder.js');
 var localdb       = require("./localdb");
 var awc           = require('./lib.js');
 
@@ -84,12 +86,20 @@ passport.deserializeUser(localdb.deserializeUser);
 // =============================================================================
 app.get('/', function(req, res) {
    var news = localdb.getNews();
+   var latestdumps = config.use_ladder ? ladder.getLatestDumps() : [];
+   var latestscreens = config.use_ladder ? ladder.getLatestScreenshots() : [];
+   var latestdeaths = localdb.getLatestDeaths();
+   var latestwins = localdb.getLatestWins();
    var stats = awc.stats();
-	res.render('frontpage/frontpage.ejs', {
-      user    : req.user ? req.user.name : null, 
-      news    : news,
-      games   : stats.games,
-      players : stats.players
+      res.render('frontpage.ejs', {
+	user    : req.user ? req.user.name : null, 
+	news,
+	games   : stats.games,
+	players : stats.players,
+	latestdumps,
+	latestscreens,
+	latestdeaths,
+	latestwins
 	});
 });
 
@@ -99,8 +109,11 @@ app.post('/enter', passport.authenticate("local", {failureRedirect: '/forbidden'
 });
 
 app.get("/play", localdb.isUserLoggedIn, function(req, res) {
-   console.log("rendering play");
    return res.render("play/play.ejs", {user: req.user});
+});
+
+app.get('/login', function(req, res) {
+   return res.render("login.ejs");
 });
 
 app.get('/faq', function(req, res) {

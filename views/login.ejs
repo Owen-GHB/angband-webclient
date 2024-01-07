@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>FAQ</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css">
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>
+    <div id='container'>
+		<%- include('header.ejs', { pageTitle: 'Play' }) %>
+		<div id='content'>
+			<div id='login' style='max-width:720px;margin:auto;'>
+				<% if (typeof(user)!='undefined') { %>
+					<section>
+					<div class="title">Login</div>
+					<div class="content">
+						<p>Welcome back, <%= user %></p>
+						<p>
+						<a class="btn" href="/play">Go play games</a>
+						</p>
+						<p>
+						<a class="btn" href="/logout">Logout</a>
+						</p>
+					</div>
+					</section>
+
+				<% } else { %>
+					<section>
+					<div class="title">Login</div>
+					<div class="content">
+						<form method="post" action="/enter">
+							<div>
+								<label for="username">nickname</label>
+								<input id="username" type="text" name="username" placeholder="min 3 characters..">
+							</div>
+							<div>
+								<label for="password">password</label>
+								<input id="password" type="password" name="password">
+							</div>
+							<div>
+								<input type="submit" name="name" value="Enter">
+							</div>
+						</form>
+						<br/>
+						<p class="text-center">To register a new account just type a username and password, if the username does not exist a new account will be created </p>
+						<p class="text-center">Please note that the nickname must be 3-25 characters long, it cannot have special characters, and the password must contain at least 8 characters.</p>
+					</div>
+					</section>
+
+				<% } %>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

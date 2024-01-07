@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "cookie-session": "^2.0.0-beta.1",
@@ -19,12 +19,13 @@
     "fs-extra": "^3.0.1",
     "jstransformer-markdown-it": "^2.1.0",
     "lowdb": "^1.0.0",
+    "lru-cache": "^10.1.0",
     "moment": "^2.22.2",
     "mongoose": "^4.9.7",
     "mongoose-integer": "^0.1.1",
     "morgan": "^1.9.1",
     "nedb-session-store": "^1.1.2",
-    "node-pty": "^0.9.0",
+    "node-pty": "^1.0.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
@@ -32,6 +33,7 @@
     "pug": "^2.0.3",
     "serve-favicon": "~2.4.2",
     "session-file-store": "^1.2.0",
+    "sync-mysql": "^3.0.1",
     "term.js": "0.0.7"
   }
 }

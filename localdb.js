@@ -90,7 +90,7 @@ module.exports.isUserLoggedIn = function(req, res, next) {
    }
    req.logout();
    res.clearCookie('session');
-   res.redirect("/");
+   res.redirect("/login");
 };
 
 
@@ -170,6 +170,24 @@ module.exports.deathsOverview = function(){
 	}
 	
 	return result;
+}
+
+module.exports.getLatestDeaths = function(){
+    var deaths = db.deaths.get('data');
+    deaths = deaths.filter(death => death.killedBy != "Ripe Old Age");
+    deaths = deaths.orderBy('date', 'desc').value();
+    deaths = deaths.slice(0, 5);
+
+    return deaths;
+}
+
+module.exports.getLatestWins = function(){
+    var deaths = db.deaths.get('data');
+    deaths = deaths.filter(death => death.killedBy == "Ripe Old Age");
+    deaths = deaths.orderBy('date', 'desc').value();
+    deaths = deaths.slice(0, 5);
+
+    return deaths;
 }
 
 module.exports.getUserStats = function(user){
@@ -273,12 +291,11 @@ module.exports.setVersionString = function(game,longname) {
 	return longname;
 }
 
-// get last 10 news
 function getNews() {
    return db.news
       .get("data")
       .orderBy("timestamp", "desc")
-      .take(20)
+      .take(1)
       .value();
 }
 module.exports.getNews = getNews;
