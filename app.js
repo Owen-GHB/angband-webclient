@@ -15,10 +15,19 @@ var ladder        = require('./ladder.js');
 var localdb       = require("./localdb");
 var awc           = require('./lib.js');
 
-// do some crucial checks before we can proceed
 if(!process.env.SESSION_SECRET) {
-   console.warn("SESSION_SECRET environment variable must be set, refer to readme.md. Exiting..");
-   process.exit(1);
+  var result = '';
+  while (result.length < length) {
+    const randomCharCode = Math.floor(Math.random() * (122 - 48) + 48);
+    if (
+      (randomCharCode >= 48 && randomCharCode <= 57) ||
+      (randomCharCode >= 65 && randomCharCode <= 90) ||
+      (randomCharCode >= 97 && randomCharCode <= 122)
+    ) {
+      result += String.fromCharCode(randomCharCode);
+    }
+  }
+  process.env.SESSION_SECRET=result;
 }
 
 var users = localdb.getUserList();
