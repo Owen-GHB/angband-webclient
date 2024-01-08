@@ -11,7 +11,8 @@ var expressWs     = require('express-ws')(app);
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var config        = require('./config');
-var ladder        = require('./ladder.js');
+var ladder        = config.use_ladder ? require('./ladder.js') : null;
+var vbulletin     = config.use_vbulletin ? require('./vbulletin.js') : null;
 var localdb       = require("./localdb");
 var awc           = require('./lib.js');
 
@@ -99,6 +100,7 @@ app.get('/', function(req, res) {
    var latestscreens = config.use_ladder ? ladder.getLatestScreenshots() : [];
    var latestdeaths = localdb.getLatestDeaths();
    var latestwins = localdb.getLatestWins();
+   var latestthreads = config.use_vbulletin ? vbulletin.getLatestThreads(): [];
    var stats = awc.stats();
       res.render('frontpage.ejs', {
 	user    : req.user ? req.user.name : null, 
@@ -108,7 +110,10 @@ app.get('/', function(req, res) {
 	latestdumps,
 	latestscreens,
 	latestdeaths,
-	latestwins
+	latestwins,
+	latestthreads,
+	ladder_url : config.use_ladder ? config.ladder_url : '',
+	vbulletin_url : config.use_vbulletin ? config.vbulletin_url : ''
 	});
 });
 

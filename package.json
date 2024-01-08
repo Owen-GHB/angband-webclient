@@ -17,6 +17,7 @@
     "express-session": "^1.15.6",
     "express-ws": "^3.0.0",
     "fs-extra": "^3.0.1",
+    "he": "^1.2.0",
     "jstransformer-markdown-it": "^2.1.0",
     "lowdb": "^1.0.0",
     "lru-cache": "^10.1.0",

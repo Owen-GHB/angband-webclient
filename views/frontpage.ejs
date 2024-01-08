@@ -101,7 +101,7 @@
 					<% latestscreens.forEach(function(n) { %>
 					<tr>
 					<td><%= n.time_f %></td>
-					<td><a href="<%= 'https://forum.angband.live/screen-show.php?id='+n.id %>"><%= n.name %></a></td>
+					<td><a href="<%= ladder_url+'/screen-show.php?id='+n.id %>"><%= n.name %></a></td>
 					<td><%= n.variant %></td>
 					<td><%= n.username.length ? n.username : "<"+n.email+">" %></td>
 					</tr>
@@ -113,6 +113,29 @@
 		  </div>
 		  <% } %>
 		  </div>
+		  <% if (latestthreads.length) { %>
+                  <div id='threads'>
+                          <section>
+                                  <div class="title">Latest Forum Threads</div>
+                                  <div class="content">
+                                        <table>
+                                        <tbody>
+                                        <% latestthreads.forEach(function(n) { %>
+                                        <tr>
+                                        <td><%= n.date %></td>
+                                        <td><a href="<%= vbulletin_url+'/'+n.category.toLowerCase().replace(/\s+/g,'-')+'/'+n.forum.toLowerCase().replace(/\s+/g,'-')+'/'+n.id %>">
+						<%= n.title %>
+					</a></td>
+                                        <td><%= n.lastauthor %></td>
+                                        <td><%= n.forum %></td>
+                                        </tr>
+                                        <% }); %>
+                                        </tbody>
+                                        </table>
+                                  </div>
+                          </section>
+                  </div>
+                  <% } %>
         </div>
         <div id='right-pane'>
           <div id='login'><% if (typeof(user)!='undefined' && user) { %><section>
