@@ -10,7 +10,8 @@ var connection = new MySql({
 });
 
 function getLatestThreads() {
-	const query = `
+    var dayhence = Date.now()/1000-86400;
+    var query = `
             SELECT
                 o1.lastcontent,
                 o1.lastcontentid AS id,
@@ -27,13 +28,13 @@ function getLatestThreads() {
             LEFT JOIN
                 oook_user u ON o1.lastauthorid = u.userid
             WHERE
-                o1.lastcontent > 1704581661
+                o1.lastcontent > ${dayhence}
                 AND o1.title != ''
                 AND o1.contenttypeid = 20;
         `;
   	var result = connection.query(query);
 	result = result.map(row => {
-		var lastcontent = new Date(row.lastcontent);
+		var lastcontent = new Date(row.lastcontent*1000);
 		row.date = lastcontent.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' , hour12: false });
 		row.title = he.decode(row.title);
 		return row;
