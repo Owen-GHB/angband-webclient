@@ -10,7 +10,7 @@ var connection = new MySql({
 });
 
 function getLatestThreads() {
-    var dayhence = Date.now()/1000-86400;
+    var weekhence = Date.now()/1000-7*86400;
     var query = `
             SELECT
                 o1.lastcontent,
@@ -28,9 +28,10 @@ function getLatestThreads() {
             LEFT JOIN
                 oook_user u ON o1.lastauthorid = u.userid
             WHERE
-                o1.lastcontent > ${dayhence}
+                o1.lastcontent > ${weekhence}
                 AND o1.title != ''
-                AND o1.contenttypeid = 20;
+                AND o1.contenttypeid = 20
+            LIMIT 3;
         `;
   	var result = connection.query(query);
 	result = result.map(row => {

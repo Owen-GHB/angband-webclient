@@ -25,7 +25,7 @@ html,body,div,p,table,tbody {
 }
 
 html,body,input,button {
-   color: #E9F1F7;
+   color: #c2dfe3ff;
    font-size: 14px;
    font-family: 'Ubuntu Mono', monospace;
 }
@@ -36,7 +36,7 @@ input, button {
    padding: 0.2rem 0.4rem;
 }
 
-input[type=submit], a { cursor: pointer; color: #c2dfe3ff; }
+input[type=submit], a { cursor: pointer; color: #c6a15b; text-decoration: none; }
 
 
 section:not(:last-of-type) {
@@ -55,15 +55,16 @@ section .title, section .footer {
 }
 section .title {
    background-image: linear-gradient(to bottom right, #647aa3ff, #162430ff);
-   padding-top: 0.3rem;
-   padding-bottom: 0.3rem;
+   padding-top: 0.2rem;
+   padding-bottom: 0.2rem;
    color: #C0E6DE;
 }
 section .content { 
-   padding: 0.5rem;
-   padding-left: 1rem; 
+   padding-left: 0.5rem;
+   padding-right: 0.5rem; 
+   padding-top: 0.25rem;
+   padding-bottom: 0.25rem;
 }
-section .content a { color: #c6a15b; text-decoration: none; }
 section .content b, 
 section .content strong
    { color: white; font-weight: 400; }
@@ -92,7 +93,9 @@ section .content ul li {
 
 #login form label { display: block; }
 #login form input { width: 100%; box-sizing: border-box; }
-#login form div:not(:last-of-type) { margin-bottom: 1rem; } 
+#login form input[type="submit"] { border: 2px outset #647aa3ff; }
+#login form div { margin-top: 0.5rem; } 
+#login form { margin-bottom: 0.5rem; }
 
 /* lgog */
 #logo { padding: 54px 32px 0px 10px; }
@@ -123,12 +126,16 @@ section .content ul li {
 
 .flexbox {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
 }
 
+.flexbox table {
+  flex:1;
+}
+
 #content {
-  padding: 8px 4px; 
+  padding: 4px; 
   background-color: #162430ff;
   border: 2px outset #647aa3ff;
   height: 100%;
@@ -153,7 +160,11 @@ section .content ul li {
   flex: 1;
 }
 
-#deaths, #wins {
+#deaths {
+  flex: 3;
+}
+
+#wins {
   flex: 2;
 }
 
@@ -196,4 +207,35 @@ div.locationbar a.akt {
   background-image: none;
   background-color: #162430ff;
   padding-bottom: 3px;
+}
+
+big {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #e0fbfcff;
+}
+
+#wins td, #deaths td, #wins tr, #deaths tr {
+  margin: 0px;
+  padding: 0px;
+  line-height: 0.9;
+}
+
+#description p {
+  margin: 6px;
+  font-family: 'Inconsolata', monospace;
+  line-height: 1.2;
+}
+
+td {
+  padding-left: 6px;
+}
+
+#games .content {
+  margin: 6px;
+}
+
+#description a {
+  font-weight: bold;
+  color: #e0fbfcff;
 }

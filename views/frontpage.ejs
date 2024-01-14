@@ -3,20 +3,39 @@
   <head>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
     <title>Angband Live</title>
-    <meta name='description' content='Web based client for playing Angband and variants remotely. Supports recording and live spectating.'>
+    <meta name='description' content='A home for angband on the web. Play games, upload characters, join discussions.'>
     <link rel='icon' type='image/png' href='/favicon.png'>
     <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet'>
+	<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
     <link rel='stylesheet' href='/css/index.css'>
     <script type='text/javascript' src='/js/jquery-3.2.1.min.js'></script>
   </head>
   <body>
     <div id='container'><%- include('header.ejs', { pageTitle: 'Home' }) %><div id='content' class='flexbox'>
         <div id='left-pane'>
-		<div id='news'><% news.forEach(function(n) { %><section>
-			  <div class="title"><%= n.title %></div>
-			  <div class="content"><% n.content.forEach(function(p) { %><%- p %><% }); %></div>
-			  <div class="footer">published at <span><%= n.timestamp %></span></div>
-			</section><% }); %>
+		<div id='description'>
+		<section>
+		<div class='content'>
+		<p><a href="https://githib.angband.io/angband"><big>Angband</big></a> is a dungeon crawling roleplaying game of the 
+			<a href="https://roguebasin.com/index.php/What_a_roguelike_is">roguelike</a> type. It was created in 1990 at the University of Warwick based on the 
+			source code for the Unix version of <a href="https://umoria.org/">Moria</a>, and released to the public in 1993 as version 
+			<a href="https://githib.angband.io/angband/release/2.4.fk">2.4.frog-knows</a>. The game has had a series of different maintainers and has remained in 
+			continuous development. Since 2013 the game has been maintained by <a href="https://github.com/NickMcConnell">Nick</a> and the latest release is 
+			<a href="https://github.com/angband/angband/releases/latest">4.2.5</a>.
+			</p>
+		<p><big>Angband variants</big> are a family of similar games created by modifying the source code of Angband or another variant, made possible by the games
+			permissive <a href="https://angband.readthedocs.io/en/latest/copying.html">license</a> and well organised code. There are 
+			<a href="https://nickmcconnell.github.io/AngbandPlus/">dozens</a> of such games created over the decades, some of which have rivalled the popularity 
+			and complex history of Angband itself.
+			</p>
+		<p><big>Angband Live</big> is a platform for playing Angband and its variants online in the browser and spectating live games. Multiple historical versions and
+			many variants are available to play online for free. The site also hosts the <a href="<%=ladder_url%>">Angband ladder</a>, a platform for posting 
+			character sheets, and the <a href="<%=vbulletin_url%>">Angband forums</a> which are the main centre for online discussions about the game and its variants.
+			</p>
+		<p>This site was created by <a href="https://github.com/Owen-GHB">Gwarl</a> with significant contributions from <a href="https://github.com/kaytrance">kt</a>.
+			</p>
+		</div>
+		</section>
 		</div>
 		<div class='pagerow'>
 			  <div id='games'>
@@ -70,7 +89,7 @@
 			<% var date = new Date(n.sortdate) %>
 			<td><%= date.toLocaleTimeString('en-GB',{hour:'numeric',minute:'numeric',hour12:false}) %></td>
 			<td>
-			<a href="<%= 'https://forum.angband.live/ladder-show.php?id='+n.id %>"><%= n.name %></a>
+			<a href="<%= ladder_url+'/ladder-show.php?id='+n.id %>"><%= n.name %></a>
 			<% if (n.date_upd !== '0000-00-00 00:00:00') { %>
 				<img src="/img/jimmac-updated.png" title="updated" alt="updated" align="absbottom" width="16" height="16">
 			<% } %>
@@ -113,29 +132,51 @@
 		  </div>
 		  <% } %>
 		  </div>
+			<% if (latestreleases.length) { %>
+			  <div id='releases'>
+				<section>
+				  <div class="title">Latest Releases</div>
+				  <div class="content flexbox">
+					<% for (let i = 0; i < latestreleases.length; i += 3) { %>
+					  <table>
+						<tbody>
+						  <% for (let j = i; j < Math.min(i + 3, latestreleases.length); j++) { %>
+							<tr>
+							  <td><a href="https://github.com/<%=latestreleases[j].repo%>/releases/latest"><%= latestreleases[j].name+" "+latestreleases[j].version %></a></td>
+							  <td><%= latestreleases[j].date %></td>
+							</tr>
+						  <% } %>
+						</tbody>
+					  </table>
+					<% } %>
+				  </div>
+				</section>
+			  </div>
+			<% } %>
+
 		  <% if (latestthreads.length) { %>
-                  <div id='threads'>
-                          <section>
-                                  <div class="title">Latest Forum Threads</div>
-                                  <div class="content">
-                                        <table>
-                                        <tbody>
-                                        <% latestthreads.forEach(function(n) { %>
-                                        <tr>
-                                        <td><%= n.date %></td>
-                                        <td><a href="<%= vbulletin_url+'/'+n.category.toLowerCase().replace(/\s+/g,'-')+'/'+n.forum.toLowerCase().replace(/\s+/g,'-')+'/'+n.id %>">
-						<%= n.title %>
-					</a></td>
-                                        <td><%= n.lastauthor %></td>
-                                        <td><%= n.forum %></td>
-                                        </tr>
-                                        <% }); %>
-                                        </tbody>
-                                        </table>
-                                  </div>
-                          </section>
-                  </div>
-                  <% } %>
+			  <div id='threads'>
+					  <section>
+							  <div class="title">Latest Forum Threads</div>
+							  <div class="content">
+									<table>
+									<tbody>
+									<% latestthreads.forEach(function(n) { %>
+									<tr>
+									<td><%= n.date %></td>
+									<td><a href="<%= vbulletin_url+'/'+n.category.toLowerCase().replace(/\s+/g,'-')+'/'+n.forum.toLowerCase().replace(/\s+/g,'-')+'/'+n.id %>">
+										<%= n.title %>
+									</a></td>
+									<td><%= n.lastauthor %></td>
+									<td><%= n.forum %></td>
+									</tr>
+									<% }); %>
+									</tbody>
+									</table>
+							  </div>
+					  </section>
+			  </div>
+		  <% } %>
         </div>
         <div id='right-pane'>
           <div id='login'><% if (typeof(user)!='undefined' && user) { %><section>

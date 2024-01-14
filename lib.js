@@ -4,6 +4,7 @@ var moment      = require('moment');
 var ps          = require('ps-node');
 var fs          = require('fs-extra');
 var config      = require("./config");
+var gitOps      = config.use_github ? require('./gitops.js') : null;
 var terminal    = require('term.js');
 
 var lib         = {};
@@ -154,7 +155,20 @@ function chat(user, message){
 			games = localdb.fetchGames();
 			response.content = "db refreshed";
 			players[user.name].socket.send(JSON.stringify(response));
-		} else if (command === "/unbanall" && user.roles.indexOf("dev") !== -1) {
+		} else if (command === "/updateversions" && dev) {
+      gitOps.getGitHubInfoForGames()
+        .then((infoArray) => {
+          localdb.updateLatestReleases(infoArray);
+          localdb.refresh();
+          games = localdb.fetchGames();
+          response.content = "fetched release info";
+          players[user.name].socket.send(JSON.stringify(response));
+        })
+        .catch((error) => {
+          response.content = 'Error updating versions: '+error;
+          players[user.name].socket.send(JSON.stringify(response));
+        });
+    } else if (command === "/unbanall" && dev) {
 			localdb.unBanAll();
 			response.content = "unbanned all users";
 			players[user.name].socket.send(JSON.stringify(response));

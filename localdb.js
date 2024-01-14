@@ -273,6 +273,59 @@ module.exports.removeIgnore = function(username, ignored) {
 	return ignores;
 }
 
+module.exports.updateLatestReleases = function(info) {
+  var games = db.games.get('data').value();
+
+  for (var gameInfo of info) {
+    var game = games.find(g => g.name === gameInfo.name);
+
+    if (game) {
+      try {
+        Object.assign(game, {
+          githubVersion: gameInfo.version,
+          releaseDate: gameInfo.releaseDate,
+        });
+      } catch (error) {
+        console.error(`Error updating GitHub information for ${game.name}: ${error.message}`);
+      }
+    } else {
+      console.error(`Game not found for ${gameInfo.name}`);
+    }
+  }
+
+  db.games.set('data', games).write();
+}
+
+module.exports.getLatestReleases = function () {
+  var games = db.games.get('data').value();
+  var currentDate = new Date();
+
+  var allReleases = games
+    .filter((game) => typeof (game.releaseDate) !== 'undefined').map((game) => {
+      var { longname, repo, githubVersion, releaseDate } = game;
+      var releaseDateObj = new Date(releaseDate);
+      var date = releaseDateObj.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      return {
+        name: longname,
+        repo,
+        version: githubVersion,
+        date,
+      };
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by release date in descending order
+
+  // Get releases in the last three months
+  var recentReleases = allReleases.filter(
+    (release) => currentDate - new Date(release.date) <= 2678400000
+  );
+
+  var latestReleases = allReleases.slice(0, Math.max(6, Math.min(recentReleases.length, 9)));
+
+  return latestReleases;
+}
+
+
 module.exports.fetchGames = function() {
 	return db.games.value().data;
 }

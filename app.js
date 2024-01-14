@@ -6,6 +6,7 @@ var session       = require('express-session');
 var FileStore     = require('session-file-store')(session)
 var bodyParser    = require('body-parser');
 var terminal      = require('term.js');
+var cron          = require('node-cron');
 var app           = express();
 var expressWs     = require('express-ws')(app);
 var passport      = require('passport');
@@ -13,6 +14,8 @@ var LocalStrategy = require('passport-local').Strategy;
 var config        = require('./config');
 var ladder        = config.use_ladder ? require('./ladder.js') : null;
 var vbulletin     = config.use_vbulletin ? require('./vbulletin.js') : null;
+var cron          = config.use_github ? require('node-cron') : null;
+var gitOps        = config.use_github ? require('./gitops.js') : null;
 var localdb       = require("./localdb");
 var awc           = require('./lib.js');
 
@@ -101,6 +104,7 @@ app.get('/', function(req, res) {
    var latestdeaths = localdb.getLatestDeaths();
    var latestwins = localdb.getLatestWins();
    var latestthreads = config.use_vbulletin ? vbulletin.getLatestThreads(): [];
+   var latestreleases = config.use_github ? localdb.getLatestReleases(): [];
    var stats = awc.stats();
       res.render('frontpage.ejs', {
 	user    : req.user ? req.user.name : null, 
@@ -112,6 +116,7 @@ app.get('/', function(req, res) {
 	latestdeaths,
 	latestwins,
 	latestthreads,
+  latestreleases,
 	ladder_url : config.use_ladder ? config.ladder_url : '',
 	vbulletin_url : config.use_vbulletin ? config.vbulletin_url : ''
 	});
@@ -214,9 +219,15 @@ app.use(function(req, res, next) {
 //   });
 // });
 
-
-
-
+cron.schedule('0 * * * *', async () => {
+  try {
+    var infoArray = await gitOps.getGitHubInfoForGames();
+    localdb.updateLatestReleases(infoArray);
+    localdb.refresh();
+  } catch (error) {
+    console.error('Error updating database with latest releases:', error);
+  }
+});
 
 // =============================================================================
 //  S E R V E R   L A U N C H
