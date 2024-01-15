@@ -98,7 +98,7 @@ section .content ul li {
 #login form { margin-bottom: 0.5rem; }
 
 /* lgog */
-#logo { padding: 54px 32px 0px 10px; }
+#logo { padding: 46px 16px 0px 10px; }
 
 /* donations block */
 #donate input {
@@ -188,7 +188,7 @@ section .content ul li {
 }
 
 div.locationbar { 
-	padding-top: 40px; 
+	padding-top: 32px; 
 }
 
 div.locationbar a { 

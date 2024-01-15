@@ -98,28 +98,31 @@ passport.deserializeUser(localdb.deserializeUser);
 //  R O U T E S
 // =============================================================================
 app.get('/', function(req, res) {
-   var news = localdb.getNews();
-   var latestdumps = config.use_ladder ? ladder.getLatestDumps() : [];
-   var latestscreens = config.use_ladder ? ladder.getLatestScreenshots() : [];
-   var latestdeaths = localdb.getLatestDeaths();
-   var latestwins = localdb.getLatestWins();
-   var latestthreads = config.use_vbulletin ? vbulletin.getLatestThreads(): [];
-   var latestreleases = config.use_github ? localdb.getLatestReleases(): [];
-   var stats = awc.stats();
-      res.render('frontpage.ejs', {
-	user    : req.user ? req.user.name : null, 
-	news,
-	games   : stats.games,
-	players : stats.players,
-	latestdumps,
-	latestscreens,
-	latestdeaths,
-	latestwins,
-	latestthreads,
-  latestreleases,
-	ladder_url : config.use_ladder ? config.ladder_url : '',
-	vbulletin_url : config.use_vbulletin ? config.vbulletin_url : ''
-	});
+    var user = req.user ? req.user.name : null;
+    var news = localdb.getNews();
+    var latestdumps = config.use_ladder ? ladder.getLatestDumps() : [];
+    var latestscreens = config.use_ladder ? ladder.getLatestScreenshots() : [];
+    var latestdeaths = localdb.getLatestDeaths();
+    var latestwins = localdb.getLatestWins();
+    var latestthreads = config.use_vbulletin ? vbulletin.getLatestThreads(): [];
+    var latestreleases = config.use_github ? localdb.getLatestReleases(): [];
+    var { games, players } = awc.stats();
+    var ladder_url = config.use_ladder ? config.ladder_url : '';
+   	var vbulletin_url = config.use_vbulletin ? config.vbulletin_url : '';
+    res.render('frontpage.ejs', {
+      	user, 
+      	news,
+      	games,
+      	players,
+      	latestdumps,
+      	latestscreens,
+      	latestdeaths,
+      	latestwins,
+      	latestthreads,
+        latestreleases,
+      	ladder_url,
+      	vbulletin_url
+    });
 });
 
 app.post('/enter', passport.authenticate("local", {failureRedirect: '/forbidden'}), function(req, res) {
@@ -137,6 +140,11 @@ app.get('/login', function(req, res) {
 
 app.get('/faq', function(req, res) {
    res.render('faq.ejs');
+});
+
+app.get('/variants', function(req, res) {
+   var games = localdb.fetchGames();
+   res.render('variants.ejs', {games});
 });
 
 app.get('/graveyard', function(req, res) {

@@ -31,6 +31,8 @@ function getLatestThreads() {
                 o1.lastcontent > ${weekhence}
                 AND o1.title != ''
                 AND o1.contenttypeid = 20
+            ORDER BY
+                o1.lastcontent DESC
             LIMIT 3;
         `;
   	var result = connection.query(query);

@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+    <title>Angband Live</title>
+    <meta name='description' content='A home for angband on the web. Play games, upload characters, join discussions.'>
+    <link rel='icon' type='image/png' href='/favicon.png'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet'>
+	<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
+    <link rel='stylesheet' href='/css/index.css'>
+    <script type='text/javascript' src='/js/jquery-3.2.1.min.js'></script>
+  </head>
+  <body>
+    <div id='container'><%- include('header.ejs', { pageTitle: 'Home' }) %><div id='content' class='flexbox'>
+        <div id='left-pane'>
+		  <div id='active'>
+			  <section>
+				  <% games.forEach(function(n) { %>
+				  <div class="title"><%= n.longname %></div>
+				  <div class="content">
+					<%= n.desc %>
+				  </div>
+				  <% }); %>
+			  </section>
+		  </div>
+        </div>
+        <div id='right-pane'>
+          <div id='login'><% if (typeof(user)!='undefined' && user) { %><section>
+              <div class="title">Login</div>
+              <div class="content">
+                <p>Logged in as <%= user %></p>
+                <p><a class="btn" href="/logout">Logout</a></p>
+              </div>
+            </section><% } else { %><section>
+              <div class="title">Login/Register</div>
+              <div class="content">
+                <form method="post" action="/enter">
+                  <div><label for="username">nickname</label><input id="username" type="text" name="username" placeholder="min 3 characters.."></div>
+                  <div><label for="password">password</label><input id="password" type="password" name="password" placeholder="min 8 characters.."></div>
+                  <div><input type="submit" name="name" value="Enter"></div>
+                </form>
+              </div>
+            </section><% } %></div>
+          <div id='donate'>
+            <section>
+              <div class="title">Support the site</div>
+              <div class="content text-center">
+                <p>Help cover our monthly costs</p>
+                <p>Github sponsors</p><iframe src="https://github.com/sponsors/Owen-GHB/button" title="Sponsor Owen-GHB" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+                <p>Paypal</p>
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="RTYK92PSGSRGE"><input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>
+              </div>
+          </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    </div>
+  </body>
+</html>

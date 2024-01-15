@@ -452,20 +452,22 @@ function getgamelist(player) {
 	var gamelist = [];
 	for (var i in games){
 		var savexists=[];
-		for (var j in games[i].versions){
-			var versionsavexists=fs.existsSync(home+'/games/'+games[i].name+'/'+games[i].versions[j]+'/lib/save/'+player);
-			if (fs.existsSync(home+'/games/'+games[i].name+'/'+games[i].versions[j]+'/lib/save/1000.'+player)) versionsavexists=true;
-			if (versionsavexists) savexists+=games[i].versions[j];
-		}
-		gamelist.push({
-			name:games[i].name,
-			longname:games[i].longname,
-			desc:games[i].desc,
-			versions:games[i].versions,
-			owner:games[i].owner,
-			custom_subpanels:games[i].custom_subpanels,
-			savexists:savexists
-		});
+		if (typeof(games[i].versions)!='undefined') {
+      for (var j in games[i].versions){
+  			var versionsavexists=fs.existsSync(home+'/games/'+games[i].name+'/'+games[i].versions[j]+'/lib/save/'+player);
+  			if (fs.existsSync(home+'/games/'+games[i].name+'/'+games[i].versions[j]+'/lib/save/1000.'+player)) versionsavexists=true;
+  			if (versionsavexists) savexists+=games[i].versions[j];
+  		}
+  		gamelist.push({
+  			name:games[i].name,
+  			longname:games[i].longname,
+  			desc:games[i].desc,
+  			versions:games[i].versions,
+  			owner:games[i].owner,
+  			custom_subpanels:games[i].custom_subpanels,
+  			savexists:savexists
+  		});
+    }
 	}
 	gamelist.sort(function(a, b) {
 	  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
