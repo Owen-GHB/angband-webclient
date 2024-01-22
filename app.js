@@ -139,12 +139,12 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/faq', function(req, res) {
-   res.render('faq.ejs');
+   return res.render('faq.ejs');
 });
 
 app.get('/variants', function(req, res) {
    var games = localdb.fetchGames();
-   res.render('variants.ejs', {games});
+   return res.render('variants.ejs', {games});
 });
 
 app.get('/graveyard', function(req, res) {
@@ -160,6 +160,15 @@ app.get('/logout', function(req, res) {
    req.logout();
    res.clearCookie('session');
    res.redirect('/');
+});
+
+app.get("/admin", localdb.isUserLoggedIn, function(req, res) {
+  if (req.user.roles.includes("dev")){
+    var games = localdb.fetchGames();
+    return res.render("admin.ejs", {user: req.user, games: games});
+  } else {
+    return res.redirect("/forbidden");
+  }
 });
 
 app.get("/forbidden", function(req, res) {

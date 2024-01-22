@@ -1,0 +1,72 @@
+<!-- views/admin.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin View</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
+</head>
+<body>
+  <h1>Admin View</h1>
+  <ul>
+    <% games.forEach(item => { %>
+      <li>
+        <form action="/admin/update/<%= item.name %>" method="post">
+          <strong>Name:</strong> <%= item.name %><br>
+
+          <label for="<%= item.name %>-longname">Long Name:</label>
+          <input type="text" id="<%= item.name %>-longname" name="longname" value="<%= item.longname %>" required><br>
+
+          <% if (item.repo) { %>
+            <label for="<%= item.name %>-repo">Repository:</label>
+            <input type="text" id="<%= item.name %>-repo" name="repo" value="<%= item.repo %>" required><br>
+          <% } %>
+
+          <label for="<%= item.name %>-desc">Description:</label>
+          <textarea id="<%= item.name %>-desc" name="desc" rows="4" required><%= item.desc %></textarea><br>
+
+          <% if (item.versions && item.versions.length > 0) { %>
+            <strong>Versions:</strong>
+            <ul id="<%= item.name %>-versions-list">
+              <% item.versions.forEach((version, index) => { %>
+                <li>
+                  <input type="text" name="versions" value="<%= version %>" required>
+                  <button type="button" onclick="deleteVersion('<%= item.name %>', <%= index %>)">Delete</button>
+                </li>
+              <% }); %>
+            </ul>
+            <button type="button" onclick="addVersion('<%= item.name %>')">Add Version</button><br>
+          <% } %>
+
+          <% if (item.releaseDate) { %>
+            <strong>Latest Release:</strong>
+            <%= new Date(item.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %><br>
+          <% } %>
+
+          <!-- Add more fields as needed -->
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </li>
+    <% }); %>
+  </ul>
+
+  <script>
+    function addVersion(gameName) {
+      const versionsList = document.getElementById(`${gameName}-versions-list`);
+      const newVersionInput = document.createElement('li');
+      newVersionInput.innerHTML = `<input type="text" name="versions" required>
+                                    <button type="button" onclick="deleteVersion('${gameName}', ${versionsList.children.length})">Delete</button>`;
+      versionsList.appendChild(newVersionInput);
+    }
+
+    function deleteVersion(gameName, index) {
+      const versionsList = document.getElementById(`${gameName}-versions-list`);
+      versionsList.removeChild(versionsList.children[index]);
+    }
+  </script>
+</body>
+</html>
