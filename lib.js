@@ -236,8 +236,8 @@ function checkForDeath(player){
 			if ((typeof(isThrall)!='undefined') && thrall) report = false;
 			if (report){
 				var msg = player+" was killed by "+killedBy;
-				if (killedBy == "Ripe Old Age") {
-					msg+=". Long live "+player+"!";
+				if (killedBy == "Ripe Old Age" || (game=="gensouband" && ["ripe","triumph","hourai","true_loser"].includes(killedBy))) {
+					msg=player+" was killed by Ripe Old Age. Long live "+player+"!";
 					localdb.addRole("winner",player);
 				}
 				localdb.pushMessage("--deathangel--", msg);
