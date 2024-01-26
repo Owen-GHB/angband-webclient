@@ -164,6 +164,7 @@
 									<% latestthreads.forEach(function(n) { %>
 									<tr>
 									<td><%= n.date %></td>
+									<% if (n.forum=="Site Discussion") n.forum = "oook"; %>
 									<td><a href="<%= vbulletin_url+'/'+n.category.toLowerCase().replace(/\s+/g,'-')+'/'+n.forum.toLowerCase().replace(/\s+/g,'-')+'/'+n.id %>">
 										<%= n.title %>
 									</a></td>
